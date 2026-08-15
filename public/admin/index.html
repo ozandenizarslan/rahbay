@@ -421,8 +421,15 @@ async function loadMedia(sel,withDelete){
     const d=await api('/api/media');
     g.innerHTML=d.files.map(f=>`<div class="media-item" data-url="${esc(f.url)}">
       <img src="${esc(f.url)}" alt="" loading="lazy"><div class="n">${esc(f.name)}
-      ${withDelete?`<br><button class="btn danger sm" style="margin-top:6px" data-rm="${esc(f.name)}">Sil</button>`:''}</div></div>`).join('')
+      ${f.source==='paket'?'<br><span class="chip" style="margin-top:6px;display:inline-block">pakette gelen</span>':''}
+      ${withDelete&&f.source!=='paket'?`<br><button class="btn danger sm" style="margin-top:6px" data-rm="${esc(f.name)}">Sil</button>`:''}</div></div>`).join('')
       ||'<p style="color:#888">Henüz görsel yok.</p>';
+    if(sel==='#libGrid'&&d.storage){
+      const p=$('#libGrid').parentElement.querySelector('.hint');
+      if(p)p.textContent=d.storage==='r2'
+        ?'Yüklediğiniz görseller Cloudflare R2\'de kalıcı olarak saklanıyor.'
+        :'Yüklediğiniz tüm görseller. Kullanılmayanları silebilirsiniz.';
+    }
   }catch(err){ g.innerHTML='<p style="color:#b91c1c">'+esc(err.message)+'</p>'; }
 }
 async function uploadFiles(files,gridSel){

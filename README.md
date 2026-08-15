@@ -111,3 +111,20 @@ Yeniden üretmek isterseniz:
 cd tools && python3 scenes.py            # hepsi
 cd tools && python3 scenes.py proje-1-a  # tek görsel
 ```
+
+---
+
+## Yayına alma ve kalıcı depolama
+
+- `YAYINLAMA.md` — siteyi GitHub + Render üzerinden yayınlama, adım adım
+- `CLOUDFLARE-R2.md` — yüklenen görsellerin ve panel değişikliklerinin
+  kalıcı olması için Cloudflare R2 kurulumu (ücretsiz, 10 GB)
+
+Sunucu iki kipte çalışır ve kipi kendisi seçer:
+
+| Kip | Ne zaman | Nerede saklanır |
+|---|---|---|
+| Yerel | Hiçbir R2 değişkeni yoksa | `data/` ve `public/uploads/` |
+| R2 | Beş R2 değişkeni de girilmişse | Cloudflare R2 (kalıcı) |
+
+Yerelde çalıştırırken hiçbir şey değişmez; R2 yalnızca sunucuda devreye girer.

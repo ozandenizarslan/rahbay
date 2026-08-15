@@ -108,32 +108,19 @@ Yönetim paneli: `https://mehmet-rahbay.onrender.com/admin/`
 **1. Site 15 dakika ziyaretçi gelmezse uykuya geçer.**
 Sonraki ziyaretçi açtığında ~1 dakika beklet, sonra normal hızda çalışır.
 Birine link göndereceksen, göndermeden önce sen bir kez açıp uyandır.
+Bunu yalnızca ücretli plan (Starter, $7/ay) tamamen çözer.
 
-**2. Yönetim panelinden yaptığın değişiklikler kalıcı değil.**
-Site uykuya geçtiğinde veya yeniden kurulduğunda, içerik GitHub'daki hâline
-geri döner. Yüklediğin yeni görseller silinir.
+**2. Yönetim panelinden yaptığın değişiklikler varsayılan olarak kalıcı değil.**
+Render'ın ücretsiz diski geçicidir; site uykuya geçtiğinde yüklediğin görseller
+silinir, içerik GitHub'daki hâline döner.
 
-Yani ücretsiz plan **siteyi göstermek/paylaşmak için** mükemmel,
-**panelden içerik yönetmek için** uygun değil.
+**Çözümü hazır: Cloudflare R2.** Ücretsiz 10 GB depolama bağlarsan hem
+yüklediğin görseller hem de panelden yaptığın tüm düzenlemeler kalıcı olur.
+Kurulumu `CLOUDFLARE-R2.md` dosyasında adım adım anlattım — yaklaşık 10 dakika,
+bir kez yapılır, kod değişikliği gerektirmez.
 
-### Kalıcı hâle getirmek (aylık ~$7.25)
-
-Müşteriye teslim edecekseniz veya panelden düzenli içerik gireceksen:
-
-1. Render'da servisin sayfası → **Settings** → **Instance Type** → **Starter** ($7/ay)
-2. Sol menü → **Disks** → **Add Disk**
-   - Name: `veri`
-   - Mount Path: `/var/data`
-   - Size: `1` GB (≈$0.25/ay)
-3. Sol menü → **Environment** → şu ikisini ekle:
-   - `DATA_DIR` = `/var/data`
-   - `UPLOAD_DIR` = `/var/data/uploads`
-4. **Save** → servis yeniden başlar
-
-Bundan sonra panelden yapılan her değişiklik ve yüklenen her görsel kalıcı olur.
-Ayrıca site hiç uykuya geçmez, her zaman anında açılır.
-
----
+> R2 bilgilerini girmezsen sistem hiçbir hata vermez, sadece yerel kipte
+> çalışmaya devam eder. Yani istediğin zaman ekleyebilirsin.
 
 ## Sonradan değişiklik yapmak
 
