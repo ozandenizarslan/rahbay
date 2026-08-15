@@ -1,0 +1,23 @@
+{
+  "name": "mehmet-rahbay-mimarlik",
+  "version": "1.0.0",
+  "description": "Mehmet Rahbay Mimarlık — web sitesi ve yönetim paneli",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "multer": "^2.2.0"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  }
+}

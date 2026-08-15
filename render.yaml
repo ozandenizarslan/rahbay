@@ -1,0 +1,34 @@
+# Render kurulum dosyası — Render bu dosyayı görünce ayarları otomatik yapar.
+services:
+  - type: web
+    name: mehmet-rahbay
+    runtime: node
+    plan: free                 # kalıcı disk isterseniz: starter
+    region: frankfurt          # Türkiye/KKTC'ye en yakın bölge
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: SESSION_SECRET
+        generateValue: true    # Render rastgele güvenli bir anahtar üretir
+      - key: ADMIN_USER
+        value: admin
+      - key: ADMIN_PASS
+        sync: false            # Render panelinden kendi şifrenizi girersiniz
+
+    # ------------------------------------------------------------------
+    # KALICI DEPOLAMA (yönetim panelinden yapılan değişikliklerin kalması için)
+    # Ücretsiz planda disk kullanılamaz. Starter plana geçtiğinizde
+    # aşağıdaki satırların başındaki # işaretlerini silin ve plan: starter yapın.
+    # ------------------------------------------------------------------
+    # disk:
+    #   name: veri
+    #   mountPath: /var/data
+    #   sizeGB: 1
+    # (ve envVars'a ekleyin:)
+    #   - key: DATA_DIR
+    #     value: /var/data
+    #   - key: UPLOAD_DIR
+    #     value: /var/data/uploads

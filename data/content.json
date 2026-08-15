@@ -1,0 +1,311 @@
+{
+  "site": {
+    "name": "Mehmet RAHBAY",
+    "role": "Online Mimarlık & Tasarım Hizmetleri ",
+    "logo": "MR",
+    "description": "MR - Mimarlık — konut, kültür ve ofis yapıları üzerine çalışan, sadeliği ve malzemenin dürüstlüğünü esas alan bir tasarım ofisi.",
+    "footerNote": "Tüm hakları saklıdır."
+  },
+  "hero": {
+    "image": "/uploads/hero.jpg",
+    "eyebrow": "Online Mimarlık Ofisi — 2009'dan beri",
+    "titleLines": [
+      "Mekânın",
+      "sessiz dili"
+    ],
+    "subtitle": "Işığın, oranın ve malzemenin birlikte çalıştığı; gösterişten uzak, kalıcı yapılar tasarlıyoruz.",
+    "cta": "Projeleri gör",
+    "scrollHint": "Kaydır"
+  },
+  "marquee": [
+    "Konut",
+    "Kültür Yapıları",
+    "Ofis",
+    "İç Mekân",
+    "Kentsel Tasarım",
+    "Restorasyon"
+  ],
+  "about": {
+    "eyebrow": "Hakkında",
+    "title": "Az malzeme, çok düşünce.",
+    "image": "/uploads/proje-6-a.jpg",
+    "paragraphs": [
+      "Mehmet Rahbay, mimarlık eğitimini tamamladıktan sonra İstanbul ve Lefkoşa'da farklı ölçeklerde projelerde çalıştı. 2009 yılında kendi ofisini kurarak konut, kültür ve eğitim yapıları üzerine yoğunlaştı.",
+      "Ofisin yaklaşımı basit bir sorudan doğuyor: Bu yapı, bulunduğu yeri daha iyi bir yer hâline getiriyor mu? Her proje; iklim, topografya, gündelik alışkanlıklar ve bütçe gerçeğiyle birlikte, sabırlı bir eskiz sürecinden geçiyor.",
+      "Beton, ahşap ve doğal taş gibi yaşlandıkça güzelleşen malzemeleri tercih ediyoruz. Detayı gizlemek yerine görünür kılıyor; yapının nasıl kurulduğunu anlatmasına izin veriyoruz."
+    ],
+    "signature": "Mehmet Rahbay, Kurucu Mimar"
+  },
+  "stats": [
+    {
+      "value": "6",
+      "suffix": "+",
+      "label": "yıllık deneyim"
+    },
+    {
+      "value": 74,
+      "suffix": "",
+      "label": "tamamlanan proje"
+    },
+    {
+      "value": 9,
+      "suffix": "",
+      "label": "ulusal ödül"
+    },
+    {
+      "value": 5,
+      "suffix": "",
+      "label": "ülkede uygulama"
+    }
+  ],
+  "services": {
+    "eyebrow": "Hizmetler",
+    "title": "Fikirden anahtar teslime",
+    "items": [
+      {
+        "no": "01",
+        "title": "Mimari Tasarım",
+        "text": "Konsept eskizlerinden avan projeye, kütle çalışmalarından cephe kararlarına kadar bütünsel tasarım süreci."
+      },
+      {
+        "no": "02",
+        "title": "Uygulama Projesi",
+        "text": "Statik, mekanik ve elektrik ekipleriyle koordineli, şantiyede sorunsuz uygulanabilir teknik proje ve detay paketleri."
+      },
+      {
+        "no": "03",
+        "title": "İç Mekân Tasarımı",
+        "text": "Mekânın mimarisiyle konuşan mobilya, aydınlatma ve malzeme seçkisi; özel üretim detay çözümleri."
+      },
+      {
+        "no": "04",
+        "title": "Danışmanlık & Mesleki Kontrollük",
+        "text": "Fizibilite, imar analizi ve şantiye süresince tasarım bütünlüğünü koruyan periyodik mesleki denetim."
+      }
+    ]
+  },
+  "process": {
+    "eyebrow": "Süreç",
+    "title": "Dört adımda çalışıyoruz",
+    "steps": [
+      {
+        "no": "01",
+        "title": "Dinleme",
+        "text": "İhtiyaç programı, bütçe ve arsa verileri birlikte okunur."
+      },
+      {
+        "no": "02",
+        "title": "Eskiz",
+        "text": "Alternatif kütle ve plan şemaları maketle sınanır."
+      },
+      {
+        "no": "03",
+        "title": "Geliştirme",
+        "text": "Malzeme, detay ve teknik altlıklar netleştirilir."
+      },
+      {
+        "no": "04",
+        "title": "Uygulama",
+        "text": "Şantiye takibi ve teslim sonrası kontrol yapılır."
+      }
+    ]
+  },
+  "projectsSection": {
+    "eyebrow": "Seçilmiş İşler",
+    "title": "Projeler",
+    "text": "Farklı ölçek ve programlarda; ortak paydası dikkatli oran ve sade detay olan yapılar."
+  },
+  "projects": [
+    {
+      "id": "p1",
+      "slug": "kiyi-villasi",
+      "title": "Kıyı Villası",
+      "category": "Konut",
+      "year": "2024",
+      "location": "Girne, KKTC",
+      "area": "480 m²",
+      "client": "Özel",
+      "status": "Tamamlandı",
+      "cover": "/uploads/proje-1-a.jpg",
+      "images": [
+        "/uploads/proje-1-a.jpg",
+        "/uploads/proje-1-b.jpg",
+        "/uploads/proje-1-c.jpg"
+      ],
+      "summary": "Denize bakan eğimli bir arsada, iki yatay plakla tanımlanan tek aileli konut.",
+      "description": [
+        "Yapı, arazinin doğal eğimini bozmadan iki plaka hâlinde kurgulandı. Alt kat gündelik yaşama, üst kat ise yatak birimlerine ayrıldı; aradaki geniş saçak hem gölge hem de terastan denize uzanan çerçeveli bir manzara sağlıyor.",
+        "Yerel taş duvar, yapıyı kuzey rüzgârına karşı korurken beyaz sıvalı hacimlerle kontrast oluşturuyor. Havuz, alt kat kotunun uzantısı olarak yerleştirildi ve yaz aylarında yansıma yoluyla iç mekâna ışık taşıyor."
+      ],
+      "features": [
+        "Pasif güneş kontrolü",
+        "Yerel taş cephe",
+        "Doğal havalandırmalı avlu",
+        "Yağmur suyu toplama"
+      ]
+    },
+    {
+      "id": "p2",
+      "slug": "meridyen-ofis-kulesi",
+      "title": "Meridyen Ofis Kulesi",
+      "category": "Ofis",
+      "year": "2023",
+      "location": "İstanbul",
+      "area": "24.500 m²",
+      "client": "Meridyen Yatırım",
+      "status": "Tamamlandı",
+      "cover": "/uploads/proje-2-a.jpg",
+      "images": [
+        "/uploads/proje-2-a.jpg",
+        "/uploads/proje-2-b.jpg",
+        "/uploads/proje-2-c.jpg"
+      ],
+      "summary": "Her katta hafifçe dönen kat planlarıyla gölgelenen, 63 metrelik ofis yapısı.",
+      "description": [
+        "Kule, tipik kat planının her seviyede birkaç derece döndürülmesiyle oluşuyor. Bu hareket, cephede kendiliğinden bir gölge sistemi üretiyor ve güneş yükünü belirgin biçimde azaltıyor.",
+        "Zemindeki podyum kütlesi kamusal kullanıma açık: kafe, sergi alanı ve çok amaçlı salon caddeden doğrudan erişilebiliyor. Kule ile podyum arasındaki boşluk, kentin sürekliliğini kesmeyen bir geçit olarak tasarlandı."
+      ],
+      "features": [
+        "LEED Gold sertifikası",
+        "Dönen kat plakları",
+        "Çift cidarlı cephe",
+        "Kamusal zemin kat"
+      ]
+    },
+    {
+      "id": "p3",
+      "slug": "anadolu-kultur-merkezi",
+      "title": "Anadolu Kültür Merkezi",
+      "category": "Kültür",
+      "year": "2022",
+      "location": "Eskişehir",
+      "area": "9.800 m²",
+      "client": "Büyükşehir Belediyesi",
+      "status": "Tamamlandı",
+      "cover": "/uploads/proje-3-a.jpg",
+      "images": [
+        "/uploads/proje-3-a.jpg",
+        "/uploads/proje-3-b.jpg",
+        "/uploads/proje-3-c.jpg"
+      ],
+      "summary": "Kent meydanına açılan geniş kolonad ve 900 kişilik salonuyla kültür yapısı.",
+      "description": [
+        "Yapının en önemli kararı, binayı meydandan bir kolonadla ayırmak yerine ona bağlamaktı. Derin saçak altındaki gölgeli alan, etkinlik saatleri dışında da kullanılan bir kent verandası hâline geldi.",
+        "İçeride fuaye, salonu çevreleyen bir halka olarak kurgulandı; gün ışığı üstten alınan bantlarla kontrollü biçimde içeri süzülüyor. Akustik yüzeyler ahşap lamel olarak çözüldü."
+      ],
+      "features": [
+        "900 kişilik salon",
+        "Kent verandası",
+        "Üstten doğal ışık",
+        "Ahşap akustik yüzeyler"
+      ]
+    },
+    {
+      "id": "p4",
+      "slug": "teras-konutlari",
+      "title": "Teras Konutları",
+      "category": "Konut",
+      "year": "2023",
+      "location": "Girne, KKTC",
+      "area": "12.400 m²",
+      "client": "Rahbay Yapı",
+      "status": "Tamamlandı",
+      "cover": "/uploads/proje-4-a.jpg",
+      "images": [
+        "/uploads/proje-4-a.jpg",
+        "/uploads/proje-4-b.jpg",
+        "/uploads/proje-4-c.jpg"
+      ],
+      "summary": "Kademelenerek her daireye bahçe ölçeğinde teras kazandıran üç bloklu yerleşim.",
+      "description": [
+        "Bloklar yamaç boyunca kademelenerek, üst katlardaki her daireye alt kattaki dairenin çatısını teras olarak veriyor. Böylece yoğunluk düşmeden, bahçeli konut hissi korunuyor.",
+        "Blok araları rüzgâr koridoru olarak boş bırakıldı; ortak alanlar bu boşluklarda çözüldü. Cephede kullanılan brüt beton ve ince metal korkuluklar, zamanla değişen bir doku sunuyor."
+      ],
+      "features": [
+        "Her daireye özel teras",
+        "Doğal çapraz havalandırma",
+        "Ortak yeşil avlular",
+        "Brüt beton cephe"
+      ]
+    },
+    {
+      "id": "p5",
+      "slug": "beton-muze-eki",
+      "title": "Beton Müze Eki",
+      "category": "Kültür",
+      "year": "2021",
+      "location": "Lefkoşa, KKTC",
+      "area": "3.600 m²",
+      "client": "Kültür Vakfı",
+      "status": "Tamamlandı",
+      "cover": "/uploads/proje-5-a.jpg",
+      "images": [
+        "/uploads/proje-5-a.jpg",
+        "/uploads/proje-5-b.jpg",
+        "/uploads/proje-5-c.jpg"
+      ],
+      "summary": "Tarihî müzeye eklenen, düşey beton kırıcılarla gölgelenen sergi hacmi.",
+      "description": [
+        "Ek yapı, mevcut tarihî binayla yarışmamak için sessiz bir kütle olarak tasarlandı. Cephedeki düşey beton kırıcılar, gün boyunca değişen bir gölge deseni üretiyor ve sergi salonlarını doğrudan güneşten koruyor.",
+        "Askıda duran üst kütle, girişte korunaklı bir boşluk bırakıyor. Ziyaretçi, eski ve yeni yapı arasındaki bu aralıktan geçerek koleksiyona ulaşıyor."
+      ],
+      "features": [
+        "Düşey güneş kırıcılar",
+        "Askıda sergi kütlesi",
+        "İklimlendirilmiş depo",
+        "Tarihî yapıyla sessiz ilişki"
+      ]
+    },
+    {
+      "id": "p6",
+      "slug": "kampus-kutuphanesi",
+      "title": "Kampüs Kütüphanesi",
+      "category": "Eğitim",
+      "year": "2025",
+      "location": "Girne, KKTC",
+      "area": "6.200 m²",
+      "client": "Üniversite",
+      "status": "Uygulamada",
+      "cover": "/uploads/proje-6-a.jpg",
+      "images": [
+        "/uploads/proje-6-a.jpg",
+        "/uploads/proje-6-b.jpg",
+        "/uploads/proje-6-c.jpg"
+      ],
+      "summary": "U planlı kütle ve gölgeli avlusuyla, kampüsün yeni buluşma noktası.",
+      "description": [
+        "Kütüphane, kampüsün ana aksını kesmeden U biçiminde kurgulandı ve ortasında gölgeli bir avlu bıraktı. Avlunun üzerindeki pergola, gün boyunca zemine çizgisel bir gölge deseni düşürüyor.",
+        "Okuma salonları avluya, sessiz çalışma birimleri ise dışa bakacak şekilde konumlandırıldı. Zemin kattaki kafe ve sergi alanı ders saatleri dışında da açık kalıyor."
+      ],
+      "features": [
+        "Gölgeli iç avlu",
+        "Pergola gölge deseni",
+        "24 saat açık çalışma katı",
+        "Sessiz ve grup çalışma bölgeleri"
+      ]
+    }
+  ],
+  "contact": {
+    "eyebrow": "İletişim",
+    "title": "Bir projeniz mi var?",
+    "text": "Fikir aşamasındaki bir arsadan, uygulama projesi bekleyen bir yapıya kadar her ölçekte konuşmaya açığız.",
+    "email": "mehmetrahbay@gmail.com",
+    "phone": "+90 545 914 39 20",
+    "address": "Hatay/Samandağ",
+    "hours": "Pazartesi – Cuma, 09:00 – 18:00",
+    "socials": [
+      {
+        "label": "Instagram",
+        "url": "#"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "#"
+      },
+      {
+        "label": "Behance",
+        "url": "#"
+      }
+    ]
+  }
+}

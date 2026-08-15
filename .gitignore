@@ -1,0 +1,8 @@
+node_modules/
+data/admin.json
+data/backups/
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.env
+tools/__pycache__/

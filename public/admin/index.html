@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yönetim Paneli — Mehmet Rahbay Mimarlık</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f4f1; --panel:#fff; --ink:#111; --muted:#7c7c76; --line:#e2e2dc;
+    --ok:#15803d; --err:#b91c1c; --radius:10px;
+    --f:"Inter","Helvetica Neue",Helvetica,Arial,sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  body{margin:0;font-family:var(--f);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5}
+  a{color:inherit}
+  button{font:inherit;cursor:pointer}
+  input,textarea,select{font:inherit;width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:#fff;color:inherit}
+  input:focus,textarea:focus{outline:2px solid #111;outline-offset:-1px}
+  textarea{min-height:96px;resize:vertical;line-height:1.55}
+  label{display:block;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-weight:500}
+  .field{margin-bottom:16px}
+  .row{display:grid;gap:14px}
+  @media(min-width:760px){.row.c2{grid-template-columns:1fr 1fr}.row.c3{grid-template-columns:repeat(3,1fr)}}
+
+  .btn{border:1px solid var(--ink);background:var(--ink);color:#fff;border-radius:100px;padding:9px 18px;font-size:13px;transition:.2s}
+  .btn:hover{opacity:.85}
+  .btn.ghost{background:transparent;color:var(--ink)}
+  .btn.ghost:hover{background:var(--ink);color:#fff;opacity:1}
+  .btn.sm{padding:6px 13px;font-size:12px}
+  .btn.danger{border-color:var(--err);background:transparent;color:var(--err)}
+  .btn.danger:hover{background:var(--err);color:#fff}
+
+  /* giriş */
+  #login{min-height:100vh;display:grid;place-items:center;padding:24px}
+  #login .card{background:var(--panel);padding:34px;border-radius:var(--radius);width:100%;max-width:380px;border:1px solid var(--line)}
+  #login h1{font-size:22px;margin:0 0 4px;letter-spacing:-.03em}
+  #login p.sub{color:var(--muted);margin:0 0 24px;font-size:13px}
+
+  /* uygulama */
+  #app{display:none;min-height:100vh}
+  .topbar{position:sticky;top:0;z-index:20;background:rgba(244,244,241,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .topbar .in{max-width:1240px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .logo{width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:11px}
+  .title{font-weight:500;letter-spacing:-.02em}
+  .title small{display:block;color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+  .spacer{flex:1}
+  .dot{width:8px;height:8px;border-radius:50%;background:#c9c9c2;display:inline-block;margin-right:7px}
+  .dot.dirty{background:#d97706}
+  .status{font-size:12.5px;color:var(--muted)}
+
+  .layout{max-width:1240px;margin:0 auto;padding:22px 20px 90px;display:grid;gap:22px}
+  @media(min-width:960px){.layout{grid-template-columns:210px 1fr;align-items:start}}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;position:sticky;top:78px}
+  @media(min-width:960px){.tabs{flex-direction:column}}
+  .tabs button{border:1px solid transparent;background:none;text-align:left;padding:9px 13px;border-radius:8px;font-size:13.5px;color:var(--muted);width:100%}
+  .tabs button:hover{background:#e9e9e4;color:var(--ink)}
+  .tabs button.on{background:var(--ink);color:#fff}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+  .panel h2{font-size:17px;margin:0 0 4px;letter-spacing:-.02em}
+  .panel .hint{color:var(--muted);font-size:12.5px;margin:0 0 22px}
+  .card{border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:14px;background:#fdfdfc}
+  .card .head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .card .head b{font-size:14px}
+  .card .head .spacer{flex:1}
+  .chip{font-size:11px;background:#eeeee9;border-radius:100px;padding:3px 9px;color:var(--muted)}
+
+  /* görsel alanı */
+  .imgfield{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+  .thumb{width:150px;height:100px;border-radius:8px;border:1px solid var(--line);background:#eeeee9 center/cover no-repeat;flex:none}
+  .imgfield .acts{display:flex;flex-direction:column;gap:8px}
+  .gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+  .gal .cell{position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#eee}
+  .gal .cell img{width:100%;height:92px;object-fit:cover;display:block}
+  .gal .cell button{position:absolute;top:5px;right:5px;background:rgba(255,255,255,.94);border:0;border-radius:6px;padding:3px 7px;font-size:11px}
+  .gal .add{border:1px dashed var(--line);border-radius:8px;height:92px;display:grid;place-items:center;color:var(--muted);font-size:12.5px;background:#fafaf8}
+
+  /* medya kütüphanesi */
+  .modal{position:fixed;inset:0;background:rgba(15,15,15,.55);display:none;place-items:center;z-index:60;padding:18px}
+  .modal.on{display:grid}
+  .modal .box{background:#fff;border-radius:12px;width:min(940px,100%);max-height:86vh;overflow:auto;padding:22px}
+  .modal .box h3{margin:0 0 14px;font-size:16px}
+  .media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+  .media-item{border:1px solid var(--line);border-radius:8px;overflow:hidden;cursor:pointer;background:#fafaf8;transition:.2s}
+  .media-item:hover{border-color:var(--ink)}
+  .media-item img{width:100%;height:100px;object-fit:cover;display:block}
+  .media-item .n{font-size:10.5px;padding:6px 8px;color:var(--muted);word-break:break-all}
+  .drop{border:1.5px dashed var(--line);border-radius:10px;padding:22px;text-align:center;color:var(--muted);margin-bottom:16px;background:#fafaf8}
+  .drop.over{border-color:var(--ink);background:#f0f0ea;color:var(--ink)}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,120%);background:var(--ink);color:#fff;padding:11px 20px;border-radius:100px;font-size:13px;z-index:80;transition:transform .45s cubic-bezier(.16,1,.3,1)}
+  .toast.on{transform:translate(-50%,0)}
+  .toast.err{background:var(--err)}
+  .savebar{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-top:1px solid var(--line);z-index:30}
+  .savebar .in{max-width:1240px;margin:0 auto;padding:11px 20px;display:flex;gap:12px;align-items:center}
+  .err-msg{color:var(--err);font-size:12.5px;margin-top:10px;min-height:18px}
+</style>
+</head>
+<body>
+
+<!-- ------------------------------------------------------------- GİRİŞ -->
+<div id="login">
+  <form class="card" id="loginForm">
+    <h1>Yönetim Paneli</h1>
+    <p class="sub">Mehmet Rahbay Mimarlık</p>
+    <div class="field"><label>Kullanıcı adı</label><input name="username" autocomplete="username" value="admin" required></div>
+    <div class="field"><label>Şifre</label><input name="password" type="password" autocomplete="current-password" required></div>
+    <button class="btn" style="width:100%" type="submit">Giriş yap</button>
+    <div class="err-msg" id="loginErr"></div>
+  </form>
+</div>
+
+<!-- ----------------------------------------------------------- PANEL -->
+<div id="app">
+  <div class="topbar">
+    <div class="in">
+      <span class="logo">MR</span>
+      <span class="title">Yönetim Paneli<small>Mehmet Rahbay Mimarlık</small></span>
+      <span class="spacer"></span>
+      <span class="status"><span class="dot" id="dot"></span><span id="statusText">Kayıtlı</span></span>
+      <a class="btn ghost sm" href="/" target="_blank">Siteyi gör ↗</a>
+      <button class="btn ghost sm" id="pwBtn">Şifre değiştir</button>
+      <button class="btn ghost sm" id="logoutBtn">Çıkış</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="tabs" id="tabs"></div>
+    <div id="view"></div>
+  </div>
+
+  <div class="savebar">
+    <div class="in">
+      <button class="btn" id="saveBtn">Değişiklikleri kaydet</button>
+      <button class="btn ghost" id="revertBtn">Geri al</button>
+      <span class="status" id="savedAt"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ------------------------------------------------- MEDYA KÜTÜPHANESİ -->
+<div class="modal" id="mediaModal">
+  <div class="box">
+    <h3>Görsel seç</h3>
+    <div class="drop" id="drop">Dosyaları buraya sürükleyin ya da <label style="display:inline;text-transform:none;letter-spacing:0;color:#111;text-decoration:underline;cursor:pointer">bilgisayarınızdan seçin<input type="file" id="fileInput" accept="image/*" multiple hidden></label></div>
+    <div class="media-grid" id="mediaGrid"></div>
+    <div style="margin-top:18px;display:flex;gap:10px"><button class="btn ghost" id="mediaClose">Kapat</button></div>
+  </div>
+</div>
+
+<div class="modal" id="pwModal">
+  <div class="box" style="width:min(420px,100%)">
+    <h3>Şifre değiştir</h3>
+    <form id="pwForm">
+      <div class="field"><label>Mevcut şifre</label><input type="password" name="current" required></div>
+      <div class="field"><label>Yeni şifre (en az 6 karakter)</label><input type="password" name="next" minlength="6" required></div>
+      <div style="display:flex;gap:10px"><button class="btn" type="submit">Kaydet</button><button class="btn ghost" type="button" id="pwCancel">Vazgeç</button></div>
+      <div class="err-msg" id="pwErr"></div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+const $=(s,r)=>(r||document).querySelector(s), $$=(s,r)=>Array.from((r||document).querySelectorAll(s));
+const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+let content=null, original=null, dirty=false, tab='genel', mediaTarget=null;
+
+/* ------------------------------------------------------------ yardımcı */
+function toast(msg,isErr){const t=$('#toast');t.textContent=msg;t.className='toast on'+(isErr?' err':'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast',2600);}
+function setDirty(v){dirty=v;$('#dot').className='dot'+(v?' dirty':'');$('#statusText').textContent=v?'Kaydedilmemiş değişiklik':'Kayıtlı';}
+async function api(url,opt){const r=await fetch(url,Object.assign({headers:{'Content-Type':'application/json'}},opt||{}));const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'İşlem başarısız');return d;}
+function get(path){return path.split('.').reduce((o,k)=>o&&o[k],content);}
+function set(path,val){const ks=path.split('.');const last=ks.pop();const o=ks.reduce((o,k)=>o[k],content);o[last]=val;setDirty(true);}
+
+/* -------------------------------------------------------------- giriş */
+$('#loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const f=new FormData(e.target);
+  $('#loginErr').textContent='';
+  try{
+    await api('/api/login',{method:'POST',body:JSON.stringify({username:f.get('username'),password:f.get('password')})});
+    start();
+  }catch(err){$('#loginErr').textContent=err.message;}
+});
+$('#logoutBtn').addEventListener('click',async()=>{await fetch('/api/logout',{method:'POST'});location.reload();});
+
+/* ---------------------------------------------------------- alan üretici */
+function text(path,label,ta){
+  const v=get(path)||'';
+  return `<div class="field"><label>${esc(label)}</label>${ta?
+    `<textarea data-bind="${path}">${esc(v)}</textarea>`:
+    `<input data-bind="${path}" value="${esc(v)}">`}</div>`;
+}
+function list(path,label,rows){
+  const v=(get(path)||[]).join('\n');
+  return `<div class="field"><label>${esc(label)} <span style="text-transform:none;letter-spacing:0">— her satır ayrı bir madde</span></label>
+    <textarea data-bind-list="${path}" style="min-height:${(rows||5)*22}px">${esc(v)}</textarea></div>`;
+}
+function image(path,label){
+  const v=get(path)||'';
+  return `<div class="field"><label>${esc(label)}</label>
+    <div class="imgfield">
+      <div class="thumb" style="background-image:url('${esc(v)}')"></div>
+      <div class="acts">
+        <button class="btn sm" type="button" data-pick="${path}">Görseli değiştir</button>
+        <span class="chip">${esc(v||'seçilmedi')}</span>
+      </div>
+    </div></div>`;
+}
+
+/* -------------------------------------------------------------- sekmeler */
+const TABS=[
+  ['genel','Genel'],['anasayfa','Ana sayfa'],['hakkinda','Hakkında'],
+  ['projeler','Projeler'],['hizmetler','Hizmetler'],['surec','Süreç'],
+  ['iletisim','İletişim'],['medya','Medya']
+];
+
+function renderTabs(){
+  $('#tabs').innerHTML=TABS.map(([k,l])=>`<button data-tab="${k}" class="${tab===k?'on':''}">${l}</button>`).join('');
+}
+
+function render(){
+  renderTabs();
+  const v=$('#view');
+  if(tab==='genel') v.innerHTML=`<div class="panel"><h2>Genel bilgiler</h2><p class="hint">Site başlığı, logo harfleri ve alt bilgi metni.</p>
+    <div class="row c2">${text('site.name','Ofis / mimar adı')}${text('site.role','Alt başlık')}</div>
+    <div class="row c2">${text('site.logo','Logo harfleri (örn. MR)')}${text('site.footerNote','Alt bilgi notu')}</div>
+    ${text('site.description','Site açıklaması (arama motorları için)',true)}</div>`;
+
+  if(tab==='anasayfa') v.innerHTML=`<div class="panel"><h2>Açılış bölümü</h2><p class="hint">Ana sayfanın en üstündeki büyük başlık ve görsel.</p>
+    ${image('hero.image','Kapak görseli')}
+    ${text('hero.eyebrow','Üst etiket')}
+    ${list('hero.titleLines','Başlık satırları',3)}
+    ${text('hero.subtitle','Açıklama metni',true)}
+    <div class="row c2">${text('hero.cta','Buton yazısı')}${text('hero.scrollHint','Kaydırma ipucu')}</div>
+    ${list('marquee','Kayan yazı şeridi',6)}</div>`;
+
+  if(tab==='hakkinda') v.innerHTML=`<div class="panel"><h2>Hakkında</h2>
+    ${image('about.image','Bölüm görseli')}
+    <div class="row c2">${text('about.eyebrow','Üst etiket')}${text('about.signature','İmza satırı')}</div>
+    ${text('about.title','Başlık')}
+    ${list('about.paragraphs','Paragraflar',8)}
+    <h2 style="margin-top:26px">Sayılar</h2><p class="hint">Ana sayfadaki sayaçlar.</p>
+    <div id="statList"></div>
+    <button class="btn ghost sm" data-add="stats">+ Sayı ekle</button></div>`;
+
+  if(tab==='projeler') v.innerHTML=`<div class="panel"><h2>Projeler bölümü</h2>
+      <div class="row c2">${text('projectsSection.eyebrow','Üst etiket')}${text('projectsSection.title','Başlık')}</div>
+      ${text('projectsSection.text','Açıklama',true)}</div>
+    <div class="panel" style="margin-top:18px"><h2>Projeler</h2><p class="hint">Her proje ana sayfada kart, tıklanınca detay sayfası olarak görünür.</p>
+      <div id="projList"></div>
+      <button class="btn ghost sm" data-add="project">+ Yeni proje</button></div>`;
+
+  if(tab==='hizmetler') v.innerHTML=`<div class="panel"><h2>Hizmetler</h2>
+    <div class="row c2">${text('services.eyebrow','Üst etiket')}${text('services.title','Başlık')}</div>
+    <div id="servList"></div>
+    <button class="btn ghost sm" data-add="service">+ Hizmet ekle</button></div>`;
+
+  if(tab==='surec') v.innerHTML=`<div class="panel"><h2>Süreç</h2>
+    <div class="row c2">${text('process.eyebrow','Üst etiket')}${text('process.title','Başlık')}</div>
+    <div id="stepList"></div>
+    <button class="btn ghost sm" data-add="step">+ Adım ekle</button></div>`;
+
+  if(tab==='iletisim') v.innerHTML=`<div class="panel"><h2>İletişim</h2>
+    <div class="row c2">${text('contact.eyebrow','Üst etiket')}${text('contact.title','Başlık')}</div>
+    ${text('contact.text','Açıklama',true)}
+    <div class="row c2">${text('contact.email','E-posta')}${text('contact.phone','Telefon')}</div>
+    <div class="row c2">${text('contact.address','Adres')}${text('contact.hours','Çalışma saatleri')}</div>
+    <h2 style="margin-top:24px">Sosyal medya</h2><div id="socList"></div>
+    <button class="btn ghost sm" data-add="social">+ Bağlantı ekle</button></div>`;
+
+  if(tab==='medya') v.innerHTML=`<div class="panel"><h2>Medya kütüphanesi</h2>
+    <p class="hint">Yüklediğiniz tüm görseller. Kullanılmayanları silebilirsiniz.</p>
+    <div class="drop" id="drop2">Dosyaları buraya sürükleyin ya da <label style="display:inline;text-transform:none;letter-spacing:0;color:#111;text-decoration:underline;cursor:pointer">bilgisayarınızdan seçin<input type="file" id="fileInput2" accept="image/*" multiple hidden></label></div>
+    <div class="media-grid" id="libGrid"></div></div>`;
+
+  if(tab==='hakkinda') renderStats();
+  if(tab==='projeler') renderProjects();
+  if(tab==='hizmetler') renderServices();
+  if(tab==='surec') renderSteps();
+  if(tab==='iletisim') renderSocials();
+  if(tab==='medya'){loadMedia('#libGrid',true);bindDrop('#drop2','#fileInput2');}
+}
+
+/* --------------------------------------------------------- alt listeler */
+function renderStats(){
+  $('#statList').innerHTML=(content.stats||[]).map((s,i)=>`
+    <div class="card"><div class="head"><b>Sayı ${i+1}</b><span class="spacer"></span>
+      <button class="btn ghost sm" data-move="stats:${i}:-1">↑</button>
+      <button class="btn ghost sm" data-move="stats:${i}:1">↓</button>
+      <button class="btn danger sm" data-del="stats:${i}">Sil</button></div>
+      <div class="row c3">${text('stats.'+i+'.value','Değer')}${text('stats.'+i+'.suffix','Ek (örn. +)')}${text('stats.'+i+'.label','Açıklama')}</div>
+    </div>`).join('');
+}
+function renderProjects(){
+  $('#projList').innerHTML=(content.projects||[]).map((p,i)=>`
+    <div class="card"><div class="head"><b>${esc(p.title||'Yeni proje')}</b><span class="chip">${esc(p.category||'')}</span><span class="spacer"></span>
+      <button class="btn ghost sm" data-move="projects:${i}:-1">↑</button>
+      <button class="btn ghost sm" data-move="projects:${i}:1">↓</button>
+      <button class="btn danger sm" data-del="projects:${i}">Sil</button></div>
+      <div class="row c2">${text('projects.'+i+'.title','Proje adı')}${text('projects.'+i+'.slug','Adres eki (küçük harf, boşluksuz)')}</div>
+      <div class="row c3">${text('projects.'+i+'.category','Kategori')}${text('projects.'+i+'.year','Yıl')}${text('projects.'+i+'.location','Konum')}</div>
+      <div class="row c3">${text('projects.'+i+'.area','Alan')}${text('projects.'+i+'.client','İşveren')}${text('projects.'+i+'.status','Durum')}</div>
+      ${image('projects.'+i+'.cover','Kapak görseli')}
+      ${text('projects.'+i+'.summary','Kısa özet',true)}
+      ${list('projects.'+i+'.description','Detay paragrafları',6)}
+      ${list('projects.'+i+'.features','Öne çıkan özellikler',4)}
+      <div class="field"><label>Galeri görselleri</label>
+        <div class="gal">
+          ${(p.images||[]).map((im,k)=>`<div class="cell"><img src="${esc(im)}" alt=""><button data-delimg="${i}:${k}">✕</button></div>`).join('')}
+          <button type="button" class="add" data-addimg="${i}">+ Görsel ekle</button>
+        </div></div>
+    </div>`).join('');
+}
+function renderServices(){
+  $('#servList').innerHTML=(content.services.items||[]).map((s,i)=>`
+    <div class="card"><div class="head"><b>${esc(s.title||'Hizmet')}</b><span class="spacer"></span>
+      <button class="btn ghost sm" data-move="services.items:${i}:-1">↑</button>
+      <button class="btn ghost sm" data-move="services.items:${i}:1">↓</button>
+      <button class="btn danger sm" data-del="services.items:${i}">Sil</button></div>
+      <div class="row c2">${text('services.items.'+i+'.no','Numara')}${text('services.items.'+i+'.title','Başlık')}</div>
+      ${text('services.items.'+i+'.text','Açıklama',true)}</div>`).join('');
+}
+function renderSteps(){
+  $('#stepList').innerHTML=(content.process.steps||[]).map((s,i)=>`
+    <div class="card"><div class="head"><b>${esc(s.title||'Adım')}</b><span class="spacer"></span>
+      <button class="btn ghost sm" data-move="process.steps:${i}:-1">↑</button>
+      <button class="btn ghost sm" data-move="process.steps:${i}:1">↓</button>
+      <button class="btn danger sm" data-del="process.steps:${i}">Sil</button></div>
+      <div class="row c2">${text('process.steps.'+i+'.no','Numara')}${text('process.steps.'+i+'.title','Başlık')}</div>
+      ${text('process.steps.'+i+'.text','Açıklama',true)}</div>`).join('');
+}
+function renderSocials(){
+  $('#socList').innerHTML=(content.contact.socials||[]).map((s,i)=>`
+    <div class="card"><div class="head"><b>${esc(s.label||'Bağlantı')}</b><span class="spacer"></span>
+      <button class="btn danger sm" data-del="contact.socials:${i}">Sil</button></div>
+      <div class="row c2">${text('contact.socials.'+i+'.label','Ad')}${text('contact.socials.'+i+'.url','Adres')}</div></div>`).join('');
+}
+
+/* ------------------------------------------------------------ olaylar */
+document.addEventListener('input',e=>{
+  const b=e.target.getAttribute&&e.target.getAttribute('data-bind');
+  if(b){set(b,e.target.value);return;}
+  const l=e.target.getAttribute&&e.target.getAttribute('data-bind-list');
+  if(l){set(l,e.target.value.split('\n').map(s=>s.trim()).filter(Boolean));}
+});
+
+document.addEventListener('click',async e=>{
+  const t=e.target;
+
+  const tb=t.closest('[data-tab]');
+  if(tb){ tab=tb.getAttribute('data-tab'); render(); return; }
+
+  const pick=t.closest('[data-pick]');
+  if(pick){ mediaTarget={type:'field',path:pick.getAttribute('data-pick')}; openMedia(); return; }
+
+  const addimg=t.closest('[data-addimg]');
+  if(addimg){ mediaTarget={type:'gallery',index:+addimg.getAttribute('data-addimg')}; openMedia(); return; }
+
+  const delimg=t.closest('[data-delimg]');
+  if(delimg){ const [i,k]=delimg.getAttribute('data-delimg').split(':').map(Number);
+    content.projects[i].images.splice(k,1); setDirty(true); renderProjects(); return; }
+
+  const del=t.closest('[data-del]');
+  if(del){ const [path,i]=del.getAttribute('data-del').split(':');
+    if(!confirm('Bu kaydı silmek istediğinize emin misiniz?'))return;
+    get(path).splice(+i,1); setDirty(true); render(); return; }
+
+  const mv=t.closest('[data-move]');
+  if(mv){ const [path,i,d]=mv.getAttribute('data-move').split(':');
+    const arr=get(path), from=+i, to=from+ +d;
+    if(to<0||to>=arr.length)return;
+    arr.splice(to,0,arr.splice(from,1)[0]); setDirty(true); render(); return; }
+
+  const add=t.closest('[data-add]');
+  if(add){
+    const k=add.getAttribute('data-add');
+    if(k==='stats') content.stats.push({value:0,suffix:'',label:'Yeni'});
+    if(k==='service') content.services.items.push({no:String(content.services.items.length+1).padStart(2,'0'),title:'Yeni hizmet',text:''});
+    if(k==='step') content.process.steps.push({no:String(content.process.steps.length+1).padStart(2,'0'),title:'Yeni adım',text:''});
+    if(k==='social') content.contact.socials.push({label:'Yeni',url:'#'});
+    if(k==='project') content.projects.push({id:'p'+Date.now(),slug:'yeni-proje-'+(content.projects.length+1),title:'Yeni Proje',
+      category:'Konut',year:new Date().getFullYear()+'',location:'',area:'',client:'',status:'Tasarım',
+      cover:(content.projects[0]&&content.projects[0].cover)||'',images:[],summary:'',description:[],features:[]});
+    setDirty(true); render(); return;
+  }
+
+  if(t.closest('#mediaClose')){ $('#mediaModal').classList.remove('on'); return; }
+  if(t.closest('#pwBtn')){ $('#pwModal').classList.add('on'); return; }
+  if(t.closest('#pwCancel')){ $('#pwModal').classList.remove('on'); return; }
+
+  const mi=t.closest('.media-item');
+  if(mi&&mi.closest('#mediaGrid')){
+    const url=mi.getAttribute('data-url');
+    if(mediaTarget&&mediaTarget.type==='field'){ set(mediaTarget.path,url); render(); }
+    if(mediaTarget&&mediaTarget.type==='gallery'){
+      const p=content.projects[mediaTarget.index];
+      p.images=p.images||[]; p.images.push(url); setDirty(true); renderProjects();
+    }
+    $('#mediaModal').classList.remove('on'); return;
+  }
+  const rm=t.closest('[data-rm]');
+  if(rm){ const name=rm.getAttribute('data-rm');
+    if(!confirm(name+' dosyası silinsin mi?'))return;
+    try{ await api('/api/media/'+encodeURIComponent(name),{method:'DELETE'}); toast('Dosya silindi'); loadMedia('#libGrid',true);}catch(err){toast(err.message,true);} return; }
+});
+
+/* ------------------------------------------------------------ medya */
+function openMedia(){ $('#mediaModal').classList.add('on'); loadMedia('#mediaGrid'); }
+async function loadMedia(sel,withDelete){
+  const g=$(sel); if(!g)return;
+  g.innerHTML='<p style="color:#888">Yükleniyor…</p>';
+  try{
+    const d=await api('/api/media');
+    g.innerHTML=d.files.map(f=>`<div class="media-item" data-url="${esc(f.url)}">
+      <img src="${esc(f.url)}" alt="" loading="lazy"><div class="n">${esc(f.name)}
+      ${withDelete?`<br><button class="btn danger sm" style="margin-top:6px" data-rm="${esc(f.name)}">Sil</button>`:''}</div></div>`).join('')
+      ||'<p style="color:#888">Henüz görsel yok.</p>';
+  }catch(err){ g.innerHTML='<p style="color:#b91c1c">'+esc(err.message)+'</p>'; }
+}
+async function uploadFiles(files,gridSel){
+  if(!files||!files.length)return;
+  const fd=new FormData();
+  Array.from(files).forEach(f=>fd.append('files',f));
+  toast('Yükleniyor…');
+  try{
+    const r=await fetch('/api/upload',{method:'POST',body:fd});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.error||'Yükleme başarısız');
+    toast(d.files.length+' görsel yüklendi');
+    loadMedia(gridSel|| (tab==='medya'?'#libGrid':'#mediaGrid'), tab==='medya');
+  }catch(err){ toast(err.message,true); }
+}
+function bindDrop(dropSel,inputSel){
+  const d=$(dropSel), inp=$(inputSel);
+  if(!d)return;
+  ['dragenter','dragover'].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault();d.classList.add('over');}));
+  ['dragleave','drop'].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault();d.classList.remove('over');}));
+  d.addEventListener('drop',e=>uploadFiles(e.dataTransfer.files));
+  if(inp)inp.addEventListener('change',e=>uploadFiles(e.target.files));
+}
+
+/* ------------------------------------------------------------ kaydet */
+$('#saveBtn').addEventListener('click',async()=>{
+  try{
+    const d=await api('/api/content',{method:'POST',body:JSON.stringify(content)});
+    original=JSON.parse(JSON.stringify(content));
+    setDirty(false);
+    $('#savedAt').textContent='Son kayıt: '+new Date(d.savedAt).toLocaleString('tr-TR');
+    toast('Değişiklikler kaydedildi');
+  }catch(err){ toast(err.message,true); }
+});
+$('#revertBtn').addEventListener('click',()=>{
+  if(!dirty)return;
+  if(!confirm('Kaydedilmemiş tüm değişiklikler geri alınsın mı?'))return;
+  content=JSON.parse(JSON.stringify(original)); setDirty(false); render();
+});
+addEventListener('beforeunload',e=>{ if(dirty){e.preventDefault();e.returnValue='';} });
+
+$('#pwForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const f=new FormData(e.target); $('#pwErr').textContent='';
+  try{
+    await api('/api/password',{method:'POST',body:JSON.stringify({current:f.get('current'),next:f.get('next')})});
+    $('#pwModal').classList.remove('on'); e.target.reset(); toast('Şifre güncellendi');
+  }catch(err){ $('#pwErr').textContent=err.message; }
+});
+
+/* -------------------------------------------------------------- açılış */
+async function start(){
+  $('#login').style.display='none';
+  $('#app').style.display='block';
+  content=await api('/api/content');
+  original=JSON.parse(JSON.stringify(content));
+  setDirty(false); render(); bindDrop('#drop','#fileInput');
+  try{ const me=await api('/api/me'); if(me.mustChange) toast('Güvenlik için şifrenizi değiştirin'); }catch(e){}
+}
+(async function(){ try{ await api('/api/me'); start(); }catch(e){ /* giriş ekranı */ } })();
+})();
+</script>
+</body>
+</html>
