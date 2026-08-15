@@ -76,13 +76,35 @@ ul { list-style: none; }
 #preloader {
   position: fixed; inset: 0; z-index: 9999;
   background: var(--ink); color: var(--paper);
-  display: flex; align-items: flex-end; justify-content: space-between;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: var(--pad); transition: transform 1s var(--ease);
 }
 #preloader.done { transform: translateY(-101%); }
-#preloader .pl-name { font-size: clamp(1.3rem, 3.4vw, 2.4rem); font-weight: 600; letter-spacing: -0.035em; }
-#preloader .pl-count { font-size: clamp(2rem, 7vw, 5rem); font-weight: 600; letter-spacing: -0.045em; font-variant-numeric: tabular-nums; color: var(--accent-2); }
-#preloader .pl-bar { position: absolute; left: 0; bottom: 0; height: 3px; background: var(--accent); width: 0%; }
+.pl-inner { display: flex; flex-direction: column; align-items: center; gap: clamp(14px, 3vh, 30px); }
+.pl-logo { height: clamp(56px, 9vh, 86px); width: auto; opacity: .95; }
+
+.pl-build { width: min(58vw, 340px); height: auto; overflow: visible; }
+.pl-build .wall { fill: rgba(250, 247, 242, .05); stroke: rgba(250, 247, 242, .45); stroke-width: 1.6; }
+.pl-build .slab { stroke: rgba(250, 247, 242, .92); stroke-width: 2.4; stroke-linecap: round; }
+.pl-build .win { fill: rgba(250, 247, 242, .10); transition: fill .55s var(--ease); }
+.pl-build .win.lit { fill: rgba(250, 247, 242, .26); }
+.pl-build .w-on.lit { fill: var(--accent-2); }
+.pl-build .mast { stroke: rgba(250, 247, 242, .7); stroke-width: 2; }
+.pl-build .tip { fill: var(--accent); }
+.pl-ground { stroke: rgba(250, 247, 242, .3); stroke-width: 2; stroke-linecap: round; }
+.pl-crane line { stroke: var(--accent); stroke-width: 2.2; stroke-linecap: round; }
+.pl-crane rect { fill: var(--accent); }
+.pl-crane { opacity: .95; transition: opacity .5s var(--ease); }
+#preloader.built .pl-crane { opacity: 0; }
+
+.pl-meta { display: flex; align-items: baseline; gap: 14px; font-size: 11.5px; letter-spacing: .22em; text-transform: uppercase; }
+.pl-label { color: #8ea0ad; }
+.pl-count { color: var(--accent-2); font-weight: 600; font-variant-numeric: tabular-nums; }
+#preloader.built .pl-label { color: var(--accent-2); }
+.pl-bar { position: absolute; left: 0; bottom: 0; height: 3px; background: var(--accent); width: 0%; }
+
+@media (max-width: 620px) { .pl-build { width: 74vw; } }
+@media (prefers-reduced-motion: reduce) { #preloader { display: none; } }
 
 /* ------------------------------------------------------------------ logo */
 .brand-logo {

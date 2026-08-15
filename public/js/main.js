@@ -13,25 +13,58 @@
 
   /* ------------------------------------------------------------ preloader */
   const pre = $('#preloader');
+
   function runPreloader(done) {
     if (!pre) return done();
     if (reduced) { pre.classList.add('done'); return done(); }
+
     const out = $('[data-pl-count]', pre);
     const bar = $('.pl-bar', pre);
-    let v = 0;
-    const t = setInterval(() => {
-      v = Math.min(100, v + Math.random() * 13 + 4);
+    const clip = $('#plClipRect', pre);
+    const crane = $('.pl-crane', pre);
+    const wins = $$('.pl-build .win', pre);
+    const GROUND = 274, TOP = 34;
+
+    let p = 0, loaded = document.readyState === 'complete', finished = false;
+    addEventListener('load', () => { loaded = true; });
+    const t0 = performance.now();
+
+    function paint(v) {
+      const h = (GROUND - TOP) * (v / 100);
+      const top = GROUND - h;
+      if (clip) { clip.setAttribute('y', top.toFixed(1)); clip.setAttribute('height', h.toFixed(1)); }
+      if (crane) crane.setAttribute('transform', `translate(0 ${(top - 24).toFixed(1)})`);
+      for (const w of wins) {
+        const wy = parseFloat(w.getAttribute('data-y'));
+        if (wy > top + 4) w.classList.add('lit');
+      }
       if (out) out.textContent = Math.round(v);
       if (bar) bar.style.width = v + '%';
-      if (v >= 100) {
-        clearInterval(t);
-        setTimeout(() => {
-          pre.classList.add('done');
-          document.body.classList.add('loaded');
-          done();
-        }, 320);
-      }
-    }, 105);
+    }
+
+    function finish() {
+      if (finished) return;
+      finished = true;
+      paint(100);
+      pre.classList.add('built');
+      setTimeout(() => {
+        pre.classList.add('done');
+        document.body.classList.add('loaded');
+        done();
+      }, 620);
+    }
+
+    (function frame(now) {
+      const el = now - t0;
+      // yükleme bitmediyse %92'de bekler, bittiğinde tepeye çıkar
+      const target = loaded && el > 900 ? 100 : Math.min(92, el / 16);
+      p += (target - p) * 0.09;
+      if (p > 99.4) p = 100;
+      paint(p);
+      if (p >= 100) return finish();
+      if (el > 6500) return finish();          // güvenlik ağı
+      requestAnimationFrame(frame);
+    })(t0);
   }
 
   /* ------------------------------------------------------------- header */
@@ -361,7 +394,7 @@
         document.body.classList.add('loaded');
         observe(); initParallax();
       }
-    }, 4500);
+    }, 8000);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
