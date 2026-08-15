@@ -1,14 +1,14 @@
 {
   "site": {
-    "name": "Mehmet RAHBAY",
-    "role": "Online Mimarlık & Tasarım Hizmetleri ",
+    "name": "Mehmet Rahbay",
+    "role": "Online Mimarlık",
     "logo": "MR",
-    "description": "MR - Mimarlık — konut, kültür ve ofis yapıları üzerine çalışan, sadeliği ve malzemenin dürüstlüğünü esas alan bir tasarım ofisi.",
+    "description": "Mehmet Rahbay Mimarlık — konut, kültür ve ofis yapıları üzerine çalışan, sadeliği ve malzemenin dürüstlüğünü esas alan bir tasarım ofisi.",
     "footerNote": "Tüm hakları saklıdır."
   },
   "hero": {
     "image": "/uploads/hero.jpg",
-    "eyebrow": "Online Mimarlık Ofisi — 2009'dan beri",
+    "eyebrow": "Mimarlık Ofisi — 2009'dan beri",
     "titleLines": [
       "Mekânın",
       "sessiz dili"
@@ -38,7 +38,7 @@
   },
   "stats": [
     {
-      "value": "6",
+      "value": 16,
       "suffix": "+",
       "label": "yıllık deneyim"
     },
@@ -289,9 +289,9 @@
     "eyebrow": "İletişim",
     "title": "Bir projeniz mi var?",
     "text": "Fikir aşamasındaki bir arsadan, uygulama projesi bekleyen bir yapıya kadar her ölçekte konuşmaya açığız.",
-    "email": "mehmetrahbay@gmail.com",
-    "phone": "+90 545 914 39 20",
-    "address": "Hatay/Samandağ",
+    "email": "info@mehmetrahbay.com",
+    "phone": "+90 533 000 00 00",
+    "address": "Karaoğlanoğlu Cad. No 24, Girne, KKTC",
     "hours": "Pazartesi – Cuma, 09:00 – 18:00",
     "socials": [
       {
