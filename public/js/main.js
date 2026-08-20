@@ -185,6 +185,7 @@
       `<span class="line-mask"><span class="${i % 2 ? 'indent' : ''}">${esc(l)}</span></span>`).join('');
     const hi = $('[data-hero-img]');
     if (hi) hi.src = c.hero.image;
+    fill('[data-hero-tagline]', c.hero.tagline || '');
     fill('[data-hero-sub]', c.hero.subtitle);
     fill('[data-hero-cta]', c.hero.cta);
     fill('[data-hero-hint]', c.hero.scrollHint || 'Kaydır');

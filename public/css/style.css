@@ -221,6 +221,18 @@ body.menu-open .menu-links a:nth-child(5) { transition-delay: .40s; }
 .line-mask > span { display: block; transform: translateY(105%); transition: transform 1.05s var(--ease); }
 .loaded .line-mask > span { transform: translateY(0); }
 .loaded .line-mask:nth-of-type(2) > span { transition-delay: .08s; }
+.hero-tagline {
+  font-size: clamp(1.02rem, 1.9vw, 1.65rem);
+  line-height: 1.38; font-weight: 500; letter-spacing: -0.02em;
+  color: var(--ink-soft); max-width: 42ch;
+  margin-top: clamp(14px, 2.2vh, 28px);
+  opacity: 0; transform: translateY(18px);
+  transition: opacity .9s var(--ease) .4s, transform .95s var(--ease) .4s;
+}
+.loaded .hero-tagline { opacity: 1; transform: none; }
+.hero-tagline:empty { display: none; }
+@media (prefers-reduced-motion: reduce) { .hero-tagline { opacity: 1 !important; transform: none !important; } }
+
 .hero-title .display span.indent { padding-left: clamp(30px, 8vw, 150px); color: var(--accent); }
 
 .hero-media {
