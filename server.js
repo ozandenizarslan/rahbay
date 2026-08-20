@@ -126,10 +126,24 @@ function seedContent() {
   return JSON.parse(fs.readFileSync(path.join(SEED_DIR, 'content.json'), 'utf8'));
 }
 
+/* Siteye yeni bir bölüm eklendiğinde, daha önce kaydedilmiş içerikte o alan
+   bulunmaz. Eksik alanları paketle gelen varsayılanlardan tamamlarız; mevcut
+   veriler asla ezilmez. Böylece yeni özellikler panelde kendiliğinden çıkar. */
+function withDefaults(data) {
+  const seed = seedContent();
+  const out = Object.assign({}, seed, data);
+  for (const k of Object.keys(seed)) {
+    const sv = seed[k], dv = data ? data[k] : undefined;
+    const plain = (x) => x && typeof x === 'object' && !Array.isArray(x);
+    if (plain(sv) && plain(dv)) out[k] = Object.assign({}, sv, dv);
+  }
+  return out;
+}
+
 async function loadContent() {
   if (USE_R2) {
     const txt = await r2GetText('content.json');
-    if (txt) return normalizeUrls(JSON.parse(txt));
+    if (txt) return withDefaults(normalizeUrls(JSON.parse(txt)));
     const seed = seedContent();
     await r2PutText('content.json', JSON.stringify(seed, null, 2));
     console.log('  R2: content.json ilk kez oluşturuldu');
@@ -139,7 +153,7 @@ async function loadContent() {
     const seed = path.join(SEED_DIR, 'content.json');
     if (fs.existsSync(seed)) fs.copyFileSync(seed, CONTENT_FILE);
   }
-  return normalizeUrls(JSON.parse(fs.readFileSync(CONTENT_FILE, 'utf8')));
+  return withDefaults(normalizeUrls(JSON.parse(fs.readFileSync(CONTENT_FILE, 'utf8'))));
 }
 
 async function saveContent(data) {
@@ -429,6 +443,9 @@ app.get('/uploads/:name', async (req, res) => {
 
 app.get('/proje/:slug', (req, res) =>
   res.sendFile(path.join(__dirname, 'public', 'proje.html'))
+);
+app.get('/egitim/:slug', (req, res) =>
+  res.sendFile(path.join(__dirname, 'public', 'egitim.html'))
 );
 app.get('/yonetim', (req, res) => res.redirect('/admin/'));
 app.use((req, res) => res.status(404).sendFile(path.join(__dirname, 'public', '404.html')));

@@ -218,8 +218,8 @@ function image(path,label){
 /* -------------------------------------------------------------- sekmeler */
 const TABS=[
   ['genel','Genel'],['anasayfa','Ana sayfa'],['hakkinda','Hakkında'],
-  ['projeler','Projeler'],['hizmetler','Hizmetler'],['surec','Süreç'],
-  ['iletisim','İletişim'],['medya','Medya']
+  ['projeler','Projeler'],['egitimler','Eğitimler'],['hizmetler','Hizmetler'],
+  ['surec','Süreç'],['iletisim','İletişim'],['medya','Medya']
 ];
 
 function renderTabs(){
@@ -259,6 +259,14 @@ function render(){
       <div id="projList"></div>
       <button class="btn ghost sm" data-add="project">+ Yeni proje</button></div>`;
 
+  if(tab==='egitimler') v.innerHTML=`<div class="panel"><h2>Eğitimler bölümü</h2>
+      <div class="row c2">${text('trainingsSection.eyebrow','Üst etiket')}${text('trainingsSection.title','Başlık')}</div>
+      ${text('trainingsSection.text','Açıklama',true)}</div>
+    <div class="panel" style="margin-top:18px"><h2>Eğitimler</h2>
+      <p class="hint">Her eğitim ana sayfada kart, tıklanınca detay sayfası olarak görünür.</p>
+      <div id="traList"></div>
+      <button class="btn ghost sm" data-add="training">+ Yeni eğitim</button></div>`;
+
   if(tab==='hizmetler') v.innerHTML=`<div class="panel"><h2>Hizmetler</h2>
     <div class="row c2">${text('services.eyebrow','Üst etiket')}${text('services.title','Başlık')}</div>
     <div id="servList"></div>
@@ -274,6 +282,8 @@ function render(){
     ${text('contact.text','Açıklama',true)}
     <div class="row c2">${text('contact.email','E-posta')}${text('contact.phone','Telefon')}</div>
     <div class="row c2">${text('contact.address','Adres')}${text('contact.hours','Çalışma saatleri')}</div>
+    <div class="row c2">${text('contact.whatsapp','WhatsApp numarası (ülke koduyla, örn. +90 533 000 00 00)')}${text('contact.whatsappText','WhatsApp hazır mesajı')}</div>
+    <p class="hint" style="margin:-6px 0 18px">WhatsApp numarasını boş bırakırsanız sitedeki yuvarlak WhatsApp butonu görünmez.</p>
     <h2 style="margin-top:24px">Sosyal medya</h2><div id="socList"></div>
     <button class="btn ghost sm" data-add="social">+ Bağlantı ekle</button></div>`;
 
@@ -284,6 +294,7 @@ function render(){
 
   if(tab==='hakkinda') renderStats();
   if(tab==='projeler') renderProjects();
+  if(tab==='egitimler') renderTrainings();
   if(tab==='hizmetler') renderServices();
   if(tab==='surec') renderSteps();
   if(tab==='iletisim') renderSocials();
@@ -320,6 +331,53 @@ function renderProjects(){
         </div></div>
     </div>`).join('');
 }
+function renderTrainings(){
+  $('#traList').innerHTML=(content.trainings||[]).map((t,i)=>`
+    <div class="card"><div class="head"><b>${esc(t.title||'Yeni eğitim')}</b><span class="chip">${esc(t.level||'')}</span><span class="spacer"></span>
+      <button class="btn ghost sm" data-move="trainings:${i}:-1">↑</button>
+      <button class="btn ghost sm" data-move="trainings:${i}:1">↓</button>
+      <button class="btn danger sm" data-del="trainings:${i}">Sil</button></div>
+      <div class="row c2">${text('trainings.'+i+'.title','Eğitim adı')}${text('trainings.'+i+'.slug','Adres eki (küçük harf, boşluksuz)')}</div>
+      <div class="row c3">${text('trainings.'+i+'.level','Seviye')}${text('trainings.'+i+'.duration','Süre')}${text('trainings.'+i+'.format','Format')}</div>
+      <div class="row c2">${text('trainings.'+i+'.seats','Kontenjan')}${text('trainings.'+i+'.price','Ücret')}</div>
+      ${image('trainings.'+i+'.cover','Kapak görseli')}
+      ${text('trainings.'+i+'.summary','Kısa özet',true)}
+      ${list('trainings.'+i+'.description','Detay paragrafları',5)}
+      ${list('trainings.'+i+'.audience','Kimler katılmalı',4)}
+      ${list('trainings.'+i+'.requirements','Gerekenler',4)}
+
+      <div class="field"><label>Program — hafta hafta içerik</label>
+        ${(t.curriculum||[]).map((x,k)=>`
+          <div class="card" style="background:#f7f7f4">
+            <div class="head"><b>${esc(x.no||'')} ${esc(x.title||'Adım')}</b><span class="spacer"></span>
+              <button class="btn ghost sm" data-move="trainings.${i}.curriculum:${k}:-1">↑</button>
+              <button class="btn ghost sm" data-move="trainings.${i}.curriculum:${k}:1">↓</button>
+              <button class="btn danger sm" data-del="trainings.${i}.curriculum:${k}">Sil</button></div>
+            <div class="row c2">${text('trainings.'+i+'.curriculum.'+k+'.no','Numara')}${text('trainings.'+i+'.curriculum.'+k+'.title','Başlık')}</div>
+            ${text('trainings.'+i+'.curriculum.'+k+'.text','Açıklama',true)}
+          </div>`).join('')}
+        <button class="btn ghost sm" data-add="cur:${i}">+ Adım ekle</button>
+      </div>
+
+      <div class="field"><label>Sık sorulan sorular</label>
+        ${(t.faq||[]).map((x,k)=>`
+          <div class="card" style="background:#f7f7f4">
+            <div class="head"><b>${esc(x.q||'Soru')}</b><span class="spacer"></span>
+              <button class="btn danger sm" data-del="trainings.${i}.faq:${k}">Sil</button></div>
+            ${text('trainings.'+i+'.faq.'+k+'.q','Soru')}
+            ${text('trainings.'+i+'.faq.'+k+'.a','Cevap',true)}
+          </div>`).join('')}
+        <button class="btn ghost sm" data-add="faq:${i}">+ Soru ekle</button>
+      </div>
+
+      <div class="field"><label>Galeri görselleri</label>
+        <div class="gal">
+          ${(t.images||[]).map((im,k)=>`<div class="cell"><img src="${esc(im)}" alt=""><button data-deltimg="${i}:${k}">✕</button></div>`).join('')}
+          <button type="button" class="add" data-addtimg="${i}">+ Görsel ekle</button>
+        </div></div>
+    </div>`).join('');
+}
+
 function renderServices(){
   $('#servList').innerHTML=(content.services.items||[]).map((s,i)=>`
     <div class="card"><div class="head"><b>${esc(s.title||'Hizmet')}</b><span class="spacer"></span>
@@ -362,6 +420,13 @@ document.addEventListener('click',async e=>{
   const pick=t.closest('[data-pick]');
   if(pick){ mediaTarget={type:'field',path:pick.getAttribute('data-pick')}; openMedia(); return; }
 
+  const addtimg=t.closest('[data-addtimg]');
+  if(addtimg){ mediaTarget={type:'tgallery',index:+addtimg.getAttribute('data-addtimg')}; openMedia(); return; }
+
+  const deltimg=t.closest('[data-deltimg]');
+  if(deltimg){ const [i,k]=deltimg.getAttribute('data-deltimg').split(':').map(Number);
+    content.trainings[i].images.splice(k,1); setDirty(true); renderTrainings(); return; }
+
   const addimg=t.closest('[data-addimg]');
   if(addimg){ mediaTarget={type:'gallery',index:+addimg.getAttribute('data-addimg')}; openMedia(); return; }
 
@@ -387,6 +452,16 @@ document.addEventListener('click',async e=>{
     if(k==='service') content.services.items.push({no:String(content.services.items.length+1).padStart(2,'0'),title:'Yeni hizmet',text:''});
     if(k==='step') content.process.steps.push({no:String(content.process.steps.length+1).padStart(2,'0'),title:'Yeni adım',text:''});
     if(k==='social') content.contact.socials.push({label:'Yeni',url:'#'});
+    if(k.startsWith('cur:')){ const i=+k.split(':')[1]; const t=content.trainings[i];
+      t.curriculum=t.curriculum||[]; t.curriculum.push({no:String(t.curriculum.length+1).padStart(2,'0'),title:'Yeni adım',text:''});
+      setDirty(true); renderTrainings(); return; }
+    if(k.startsWith('faq:')){ const i=+k.split(':')[1]; const t=content.trainings[i];
+      t.faq=t.faq||[]; t.faq.push({q:'Yeni soru',a:''}); setDirty(true); renderTrainings(); return; }
+    if(k==='training') (content.trainings=content.trainings||[]).push({
+      id:'e'+Date.now(), slug:'yeni-egitim-'+((content.trainings||[]).length+1), title:'Yeni Eğitim',
+      level:'Başlangıç', duration:'4 hafta', format:'Online, canlı', price:'', seats:'',
+      cover:(content.trainings&&content.trainings[0]&&content.trainings[0].cover)||'',
+      images:[], summary:'', description:[], audience:[], requirements:[], curriculum:[], faq:[]});
     if(k==='project') content.projects.push({id:'p'+Date.now(),slug:'yeni-proje-'+(content.projects.length+1),title:'Yeni Proje',
       category:'Konut',year:new Date().getFullYear()+'',location:'',area:'',client:'',status:'Tasarım',
       cover:(content.projects[0]&&content.projects[0].cover)||'',images:[],summary:'',description:[],features:[]});
@@ -401,6 +476,10 @@ document.addEventListener('click',async e=>{
   if(mi&&mi.closest('#mediaGrid')){
     const url=mi.getAttribute('data-url');
     if(mediaTarget&&mediaTarget.type==='field'){ set(mediaTarget.path,url); render(); }
+    if(mediaTarget&&mediaTarget.type==='tgallery'){
+      const t2=content.trainings[mediaTarget.index];
+      t2.images=t2.images||[]; t2.images.push(url); setDirty(true); renderTrainings();
+    }
     if(mediaTarget&&mediaTarget.type==='gallery'){
       const p=content.projects[mediaTarget.index];
       p.images=p.images||[]; p.images.push(url); setDirty(true); renderProjects();

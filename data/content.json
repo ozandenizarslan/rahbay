@@ -307,6 +307,208 @@
         "label": "Behance",
         "url": "#"
       }
-    ]
-  }
+    ],
+    "whatsapp": "",
+    "whatsappText": "Merhaba, siteniz üzerinden yazıyorum."
+  },
+  "trainingsSection": {
+    "eyebrow": "Eğitimler",
+    "title": "Online mimarlık eğitimleri",
+    "text": "Küçük gruplarla, canlı ve uygulamalı. Her eğitim gerçek bir proje üzerinden ilerler."
+  },
+  "trainings": [
+    {
+      "id": "e1",
+      "slug": "mimari-gorsellestirme",
+      "title": "Mimari Görselleştirme",
+      "level": "Orta seviye",
+      "duration": "6 hafta · haftada 2 ders",
+      "format": "Online, canlı",
+      "price": "Bilgi için iletişime geçin",
+      "seats": "12 kişi",
+      "cover": "/uploads/atolye.jpg",
+      "images": [
+        "/uploads/atolye.jpg",
+        "/uploads/proje-5-c.jpg"
+      ],
+      "summary": "Bir mimari projeyi fikirden sunum paftasına kadar görselleştirmeyi baştan sona öğrenin.",
+      "description": [
+        "Eğitim boyunca tek bir konut projesini birlikte modelliyor, kaplıyor, ışıklandırıyor ve sunuma hazır hâle getiriyoruz. Her hafta kendi çalışmanızı teslim ediyor, bir sonraki derste birlikte değerlendiriyoruz.",
+        "Amaç yazılım öğretmek değil; kararların neden alındığını anlatmak. Işığın nereden geleceği, kameranın nereye konacağı, hangi malzemenin hikâyeyi taşıdığı — bunlar yazılımdan bağımsız, kalıcı bilgiler."
+      ],
+      "curriculum": [
+        {
+          "no": "01",
+          "title": "Kurulum ve kütle",
+          "text": "Çalışma ortamının kurulumu, ölçekli kütle modeli, temel kamera açıları."
+        },
+        {
+          "no": "02",
+          "title": "Malzeme ve doku",
+          "text": "Malzeme kütüphanesi mantığı, kaplama, ölçek-doku ilişkisi."
+        },
+        {
+          "no": "03",
+          "title": "Işık",
+          "text": "Gün ışığı, yapay ışık, saat seçiminin atmosfere etkisi."
+        },
+        {
+          "no": "04",
+          "title": "Kamera ve kompozisyon",
+          "text": "Odak uzaklığı, düşey doğrultma, üçte bir kuralı ve mimari fotoğraf dili."
+        },
+        {
+          "no": "05",
+          "title": "Render ayarları",
+          "text": "Kalite-süre dengesi, gürültü temizleme, katmanlı çıktı alma."
+        },
+        {
+          "no": "06",
+          "title": "Sonrası ve sunum",
+          "text": "Renk düzenleme, insan-ağaç ekleme, pafta düzeni ve portfolyoya hazırlık."
+        }
+      ],
+      "audience": [
+        "Mimarlık ve iç mimarlık öğrencileri",
+        "Portfolyosunu güçlendirmek isteyen yeni mezunlar",
+        "Sunum kalitesini yükseltmek isteyen uygulamacılar"
+      ],
+      "requirements": [
+        "Temel bilgisayar kullanımı",
+        "En az 8 GB bellekli bir bilgisayar",
+        "Kararlı internet bağlantısı"
+      ],
+      "faq": [
+        {
+          "q": "Dersleri kaçırırsam ne olur?",
+          "a": "Tüm dersler kaydedilir ve eğitim süresince tekrar izlenebilir."
+        },
+        {
+          "q": "Sertifika veriliyor mu?",
+          "a": "Devam koşulunu sağlayan ve final çalışmasını teslim eden katılımcılara katılım belgesi verilir."
+        },
+        {
+          "q": "Yazılım lisansı gerekiyor mu?",
+          "a": "Öğrenci lisansı yeterli. İlk derste ücretsiz kurulum birlikte yapılır."
+        }
+      ]
+    },
+    {
+      "id": "e2",
+      "slug": "teknik-cizim-temelleri",
+      "title": "Teknik Çizim Temelleri",
+      "level": "Başlangıç",
+      "duration": "4 hafta · haftada 2 ders",
+      "format": "Online, canlı",
+      "price": "Bilgi için iletişime geçin",
+      "seats": "15 kişi",
+      "cover": "/uploads/proje-3-b.jpg",
+      "images": [
+        "/uploads/proje-3-b.jpg",
+        "/uploads/proje-4-b.jpg"
+      ],
+      "summary": "Plan, kesit ve görünüş çizmeyi; çizim standartlarını ve pafta düzenini sıfırdan öğrenin.",
+      "description": [
+        "Hiç deneyimi olmayanlar için tasarlandı. İlk dersten itibaren gerçek bir konut planı üzerinden ilerliyoruz; katman düzeni, çizgi kalınlıkları, ölçülendirme ve antet mantığını uygulayarak öğreniyorsunuz.",
+        "Eğitim sonunda kendi çizdiğiniz plan, kesit ve görünüşlerden oluşan eksiksiz bir çizim seti elinizde oluyor."
+      ],
+      "curriculum": [
+        {
+          "no": "01",
+          "title": "Arayüz ve temel komutlar",
+          "text": "Çizim ortamı, birim ayarı, temel çizim ve düzenleme komutları."
+        },
+        {
+          "no": "02",
+          "title": "Plan çizimi",
+          "text": "Duvar, kapı, pencere; katman düzeni ve çizgi kalınlıkları."
+        },
+        {
+          "no": "03",
+          "title": "Kesit ve görünüş",
+          "text": "Kesit düzlemi seçimi, kot çizgileri, malzeme taraması."
+        },
+        {
+          "no": "04",
+          "title": "Ölçülendirme ve pafta",
+          "text": "Ölçü zincirleri, antet, ölçekli çıktı ve PDF aktarımı."
+        }
+      ],
+      "audience": [
+        "Mimarlık bölümüne yeni başlayan öğrenciler",
+        "Teknik çizimi sıfırdan öğrenmek isteyenler",
+        "İnşaat sektöründe çizim okuması gereken çalışanlar"
+      ],
+      "requirements": [
+        "Ön bilgi gerekmiyor",
+        "Bilgisayar ve fare (dokunmatik yüzey önerilmez)"
+      ],
+      "faq": [
+        {
+          "q": "Hiç çizim bilmiyorum, zorlanır mıyım?",
+          "a": "Hayır. Eğitim sıfırdan başlayanlar için kurgulandı, ön bilgi beklenmiyor."
+        },
+        {
+          "q": "Ders saatleri ne zaman?",
+          "a": "Akşam saatlerinde, çalışanların katılabileceği şekilde planlanıyor. Kesin saatler kayıt sırasında paylaşılır."
+        }
+      ]
+    },
+    {
+      "id": "e3",
+      "slug": "portfolyo-hazirlama",
+      "title": "Portfolyo Hazırlama",
+      "level": "Tüm seviyeler",
+      "duration": "3 hafta · haftada 1 ders + birebir",
+      "format": "Online, canlı + birebir görüşme",
+      "price": "Bilgi için iletişime geçin",
+      "seats": "8 kişi",
+      "cover": "/uploads/hakkinda.jpg",
+      "images": [
+        "/uploads/hakkinda.jpg",
+        "/uploads/proje-6-b.jpg"
+      ],
+      "summary": "Projelerinizi işe alım ve yüksek lisans başvurularında işe yarayan bir anlatıya dönüştürün.",
+      "description": [
+        "İyi bir portfolyo proje yığını değil, kurgulanmış bir anlatıdır. Bu eğitimde hangi projenin gireceğine, hangi görselin kalacağına ve sıralamanın nasıl olacağına birlikte karar veriyoruz.",
+        "Kontenjan sekiz kişiyle sınırlı; çünkü her katılımcıyla birebir görüşme yapılıyor ve portfolyo sayfa sayfa değerlendiriliyor."
+      ],
+      "curriculum": [
+        {
+          "no": "01",
+          "title": "Seçki ve kurgu",
+          "text": "Hangi projeler girmeli, hangi sırayla anlatılmalı, kapak ve açılış sayfası."
+        },
+        {
+          "no": "02",
+          "title": "Sayfa düzeni ve tipografi",
+          "text": "Izgara sistemi, boşluk kullanımı, yazı-görsel dengesi."
+        },
+        {
+          "no": "03",
+          "title": "Birebir değerlendirme",
+          "text": "Kişisel geri bildirim, baskı ve dijital sürüm hazırlığı."
+        }
+      ],
+      "audience": [
+        "Yüksek lisans başvurusu hazırlayanlar",
+        "İş başvurusu yapacak yeni mezunlar",
+        "Portfolyosunu yenilemek isteyen mimarlar"
+      ],
+      "requirements": [
+        "En az üç tamamlanmış proje çalışması",
+        "Sayfa düzeni yapabileceğiniz bir program"
+      ],
+      "faq": [
+        {
+          "q": "Projelerim yeterli mi bilmiyorum.",
+          "a": "Kayıt öncesi kısa bir ön görüşme yapıyoruz; elinizdekine birlikte bakıp karar veriyoruz."
+        },
+        {
+          "q": "Birebir görüşme ne kadar sürüyor?",
+          "a": "Kişi başı yaklaşık 45 dakika, eğitimin son haftasında planlanıyor."
+        }
+      ]
+    }
+  ]
 }
