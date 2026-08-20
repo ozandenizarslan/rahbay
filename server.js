@@ -103,11 +103,15 @@ async function r2List(prefix) {
 /* -------------------------------------------------------- içerik deposu */
 let content = null;   // bellekte tutulur, her istekte diske/R2'ye gidilmez
 
+function seedContent() {
+  return JSON.parse(fs.readFileSync(path.join(SEED_DIR, 'content.json'), 'utf8'));
+}
+
 async function loadContent() {
   if (USE_R2) {
     const txt = await r2GetText('content.json');
     if (txt) return JSON.parse(txt);
-    const seed = JSON.parse(fs.readFileSync(path.join(SEED_DIR, 'content.json'), 'utf8'));
+    const seed = seedContent();
     await r2PutText('content.json', JSON.stringify(seed, null, 2));
     console.log('  R2: content.json ilk kez oluşturuldu');
     return seed;
@@ -229,6 +233,17 @@ const uploadMemory = multer({
 });
 
 /* --------------------------------------------------------------------- API */
+app.get('/api/durum', (req, res) => {
+  res.json({
+    ok: true,
+    depolama: USE_R2 ? 'r2' : 'yerel',
+    r2Erisilebilir: USE_R2 ? !r2Down : null,
+    icerikYuklu: !!content,
+    surum: require('./package.json').version,
+    zaman: new Date().toISOString()
+  });
+});
+
 app.get('/api/content', (req, res) => {
   if (!content) return res.status(503).json({ error: 'İçerik henüz yüklenmedi.' });
   res.json(content);
@@ -275,7 +290,11 @@ app.post('/api/content', auth, async (req, res) => {
     res.json({ ok: true, savedAt: new Date().toISOString() });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error: 'İçerik kaydedilemedi.' });
+    res.status(500).json({
+      error: USE_R2
+        ? 'İçerik kaydedilemedi — Cloudflare R2\'ye ulaşılamıyor. Birkaç dakika sonra tekrar deneyin.'
+        : 'İçerik kaydedilemedi.'
+    });
   }
 });
 
@@ -369,14 +388,34 @@ app.get('/yonetim', (req, res) => res.redirect('/admin/'));
 app.use((req, res) => res.status(404).sendFile(path.join(__dirname, 'public', '404.html')));
 
 /* ------------------------------------------------------------------ başlat */
-(async () => {
+let r2Down = false;
+
+async function bootstrap() {
   try {
     admin = await loadAdmin();
     content = await loadContent();
+    if (r2Down) console.log('  R2 bağlantısı geri geldi, içerik yenilendi.');
+    r2Down = false;
+    return true;
   } catch (e) {
-    console.error('\n  BAŞLATMA HATASI:', e.message);
-    console.error('  R2 ayarlarını kontrol edin (R2_ACCOUNT_ID, R2_BUCKET, anahtarlar).\n');
-    process.exit(1);
+    r2Down = true;
+    console.error('  UYARI: depolama okunamadı —', e.message);
+    return false;
+  }
+}
+
+(async () => {
+  const ok = await bootstrap();
+  if (!ok) {
+    // R2'ye ulaşılamadı: site kapanmasın, paketle gelen içerikle yayına devam
+    if (!content) content = seedContent();
+    if (!admin) admin = newAdmin();
+    console.error('  Site paketle gelen içerikle açıldı. R2 için 60 sn\'de bir tekrar denenecek.');
+    const timer = setInterval(async () => {
+      if (!r2Down) return clearInterval(timer);
+      if (await bootstrap()) clearInterval(timer);
+    }, 60000);
+    timer.unref && timer.unref();
   }
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`\n  Mehmet Rahbay Mimarlık`);
