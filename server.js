@@ -103,6 +103,25 @@ async function r2List(prefix) {
 /* -------------------------------------------------------- içerik deposu */
 let content = null;   // bellekte tutulur, her istekte diske/R2'ye gidilmez
 
+/* Eskiden görseller doğrudan pub-xxx.r2.dev adresinden veriliyordu. Bazı
+   internet sağlayıcıları bu adresi engellediği için görseller kimi ziyaretçide
+   açılmıyordu. Artık tüm görseller sitenin kendi adresi üzerinden servis edilir;
+   eski kayıtlar okunurken otomatik olarak yeni biçime çevrilir. */
+function normalizeUrls(node) {
+  if (typeof node === 'string') {
+    if (R2.publicUrl && node.startsWith(R2.publicUrl + '/uploads/'))
+      return node.slice(R2.publicUrl.length);
+    return node.replace(/https?:\/\/pub-[a-z0-9]+\.r2\.dev\/uploads\//gi, '/uploads/');
+  }
+  if (Array.isArray(node)) return node.map(normalizeUrls);
+  if (node && typeof node === 'object') {
+    const out = {};
+    for (const k of Object.keys(node)) out[k] = normalizeUrls(node[k]);
+    return out;
+  }
+  return node;
+}
+
 function seedContent() {
   return JSON.parse(fs.readFileSync(path.join(SEED_DIR, 'content.json'), 'utf8'));
 }
@@ -110,7 +129,7 @@ function seedContent() {
 async function loadContent() {
   if (USE_R2) {
     const txt = await r2GetText('content.json');
-    if (txt) return JSON.parse(txt);
+    if (txt) return normalizeUrls(JSON.parse(txt));
     const seed = seedContent();
     await r2PutText('content.json', JSON.stringify(seed, null, 2));
     console.log('  R2: content.json ilk kez oluşturuldu');
@@ -120,10 +139,11 @@ async function loadContent() {
     const seed = path.join(SEED_DIR, 'content.json');
     if (fs.existsSync(seed)) fs.copyFileSync(seed, CONTENT_FILE);
   }
-  return JSON.parse(fs.readFileSync(CONTENT_FILE, 'utf8'));
+  return normalizeUrls(JSON.parse(fs.readFileSync(CONTENT_FILE, 'utf8')));
 }
 
 async function saveContent(data) {
+  data = normalizeUrls(data);
   const text = JSON.stringify(data, null, 2);
   if (USE_R2) {
     const prev = await r2GetText('content.json');
@@ -315,7 +335,7 @@ app.post('/api/upload', ensureReady, auth, (req, res) => {
         if (USE_R2) {
           const name = safeName(f.originalname);
           await r2PutBuffer(`uploads/${name}`, f.buffer, f.mimetype);
-          files.push({ url: `${R2.publicUrl}/uploads/${name}`, name, size: f.size });
+          files.push({ url: `/uploads/${name}`, name, size: f.size });
         } else {
           files.push({ url: '/uploads/' + f.filename, name: f.filename, size: f.size });
         }
@@ -346,7 +366,7 @@ app.get('/api/media', ensureReady, auth, async (req, res) => {
         const name = o.Key.replace(/^uploads\//, '');
         if (!name) return;
         items.push({
-          url: `${R2.publicUrl}/uploads/${name}`, name,
+          url: `/uploads/${name}`, name,
           size: o.Size, mtime: new Date(o.LastModified).getTime(), source: 'r2'
         });
       });
@@ -387,6 +407,25 @@ if (path.resolve(UPLOAD_DIR) !== path.resolve(SEED_UPLOADS)) {
   app.use('/uploads', express.static(UPLOAD_DIR, { maxAge: '7d' }));
 }
 app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] }));
+
+/* Pakette olmayan bir görsel istenirse Cloudflare R2'den okunup aktarılır.
+   Böylece ziyaretçi yalnızca sitenin kendi adresine bağlanır. */
+app.get('/uploads/:name', async (req, res) => {
+  if (!USE_R2) return res.status(404).end();
+  const name = path.basename(req.params.name);
+  try {
+    const r = await s3.send(new GetObjectCommand({ Bucket: R2.bucket, Key: `uploads/${name}` }));
+    res.set('Content-Type', r.ContentType || 'image/jpeg');
+    res.set('Cache-Control', 'public, max-age=31536000, immutable');
+    if (r.ETag) res.set('ETag', r.ETag);
+    if (r.ContentLength) res.set('Content-Length', String(r.ContentLength));
+    if (req.method === 'HEAD') return res.end();
+    r.Body.on('error', () => res.destroy());
+    r.Body.pipe(res);
+  } catch (e) {
+    res.status(404).end();
+  }
+});
 
 app.get('/proje/:slug', (req, res) =>
   res.sendFile(path.join(__dirname, 'public', 'proje.html'))
