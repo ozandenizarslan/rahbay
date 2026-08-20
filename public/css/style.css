@@ -219,8 +219,12 @@ body.menu-open .menu-links a:nth-child(5) { transition-delay: .40s; }
 .hero-inner { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--gap); align-items: end; }
 .hero-title { grid-column: 1 / 13; position: relative; z-index: 3; }
 .hero-eyebrow { margin-bottom: clamp(16px, 3vh, 30px); }
-.line-mask { overflow: hidden; display: block; }
-.line-mask > span { display: block; transform: translateY(105%); transition: transform 1.05s var(--ease); }
+.line-mask {
+  overflow: hidden; display: block;
+  padding-top: .18em; margin-top: -.18em;      /* Ü, Ö, İ noktalarına pay */
+  padding-bottom: .06em; margin-bottom: -.06em;
+}
+.line-mask > span { display: block; transform: translateY(125%); transition: transform 1.05s var(--ease); }
 .loaded .line-mask > span { transform: translateY(0); }
 .loaded .line-mask:nth-of-type(2) > span { transition-delay: .08s; }
 .hero-tagline {
@@ -293,8 +297,12 @@ body.menu-open .menu-links a:nth-child(5) { transition-delay: .40s; }
 .reveal[data-d="3"] { transition-delay: .21s; }
 .reveal[data-d="4"] { transition-delay: .28s; }
 .reveal[data-d="5"] { transition-delay: .35s; }
-.mask-up { overflow: hidden; display: block; }
-.mask-up > * { display: block; transform: translateY(105%); transition: transform 1.05s var(--ease); }
+.mask-up {
+  overflow: hidden; display: block;
+  padding-top: .16em; margin-top: -.16em;      /* üst noktalar */
+  padding-bottom: .12em; margin-bottom: -.12em; /* ç, ş, g, y kuyrukları */
+}
+.mask-up > * { display: block; transform: translateY(130%); transition: transform 1.05s var(--ease); }
 .mask-up.in > * { transform: none; }
 .img-clip img { clip-path: inset(0 0 100% 0); transition: clip-path 1.2s var(--ease); }
 .img-clip.in img { clip-path: inset(0 0 0 0); }
