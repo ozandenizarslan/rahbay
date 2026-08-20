@@ -194,6 +194,12 @@ app.use(
   })
 );
 
+// Depo yüklenmeden yönetim işlemleri yapılmasın (ilk saniyelerde)
+async function ensureReady(req, res, next) {
+  try { await ready; } catch (e) { /* yoksay */ }
+  next();
+}
+
 function auth(req, res, next) {
   if (req.session && req.session.user) return next();
   res.status(401).json({ error: 'Yetkisiz erişim. Lütfen giriş yapın.' });
@@ -237,8 +243,9 @@ app.get('/api/durum', (req, res) => {
   res.json({
     ok: true,
     depolama: USE_R2 ? 'r2' : 'yerel',
-    r2Erisilebilir: USE_R2 ? !r2Down : null,
+    r2Erisilebilir: USE_R2 ? (storeReady ? true : (r2Down ? false : null)) : null,
     icerikYuklu: !!content,
+    depoHazir: storeReady,
     surum: require('./package.json').version,
     zaman: new Date().toISOString()
   });
@@ -249,7 +256,7 @@ app.get('/api/content', (req, res) => {
   res.json(content);
 });
 
-app.post('/api/login', (req, res) => {
+app.post('/api/login', ensureReady, (req, res) => {
   const { username, password } = req.body || {};
   if (username === admin.username && bcrypt.compareSync(String(password || ''), admin.hash)) {
     req.session.user = admin.username;
@@ -262,13 +269,13 @@ app.post('/api/logout', (req, res) => {
   req.session.destroy(() => res.json({ ok: true }));
 });
 
-app.get('/api/me', (req, res) => {
+app.get('/api/me', ensureReady, (req, res) => {
   if (req.session && req.session.user)
     return res.json({ user: req.session.user, mustChange: !!admin.mustChange, storage: USE_R2 ? 'r2' : 'yerel' });
   res.status(401).json({ error: 'Oturum yok.' });
 });
 
-app.post('/api/password', auth, async (req, res) => {
+app.post('/api/password', ensureReady, auth, async (req, res) => {
   try {
     const { current, next } = req.body || {};
     if (!bcrypt.compareSync(String(current || ''), admin.hash))
@@ -282,7 +289,7 @@ app.post('/api/password', auth, async (req, res) => {
   }
 });
 
-app.post('/api/content', auth, async (req, res) => {
+app.post('/api/content', ensureReady, auth, async (req, res) => {
   try {
     if (!req.body || typeof req.body !== 'object' || !req.body.site)
       return res.status(400).json({ error: 'Geçersiz içerik.' });
@@ -298,7 +305,7 @@ app.post('/api/content', auth, async (req, res) => {
   }
 });
 
-app.post('/api/upload', auth, (req, res) => {
+app.post('/api/upload', ensureReady, auth, (req, res) => {
   const handler = USE_R2 ? uploadMemory : uploadLocal;
   handler.array('files', 20)(req, res, async (err) => {
     if (err) return res.status(400).json({ error: err.message });
@@ -321,7 +328,7 @@ app.post('/api/upload', auth, (req, res) => {
   });
 });
 
-app.get('/api/media', auth, async (req, res) => {
+app.get('/api/media', ensureReady, auth, async (req, res) => {
   try {
     const items = [];
     // pakette gelen görseller (silinemez)
@@ -359,7 +366,7 @@ app.get('/api/media', auth, async (req, res) => {
   }
 });
 
-app.delete('/api/media/:name', auth, async (req, res) => {
+app.delete('/api/media/:name', ensureReady, auth, async (req, res) => {
   const name = path.basename(req.params.name);
   try {
     if (USE_R2) {
@@ -389,13 +396,16 @@ app.use((req, res) => res.status(404).sendFile(path.join(__dirname, 'public', '4
 
 /* ------------------------------------------------------------------ başlat */
 let r2Down = false;
+let storeReady = false;
 
 async function bootstrap() {
   try {
-    admin = await loadAdmin();
-    content = await loadContent();
-    if (r2Down) console.log('  R2 bağlantısı geri geldi, içerik yenilendi.');
+    const [a, c] = await Promise.all([loadAdmin(), loadContent()]);
+    admin = a;
+    content = c;
+    if (r2Down) console.log('  Depolama bağlantısı geri geldi, içerik yenilendi.');
     r2Down = false;
+    storeReady = true;
     return true;
   } catch (e) {
     r2Down = true;
@@ -404,24 +414,27 @@ async function bootstrap() {
   }
 }
 
-(async () => {
-  const ok = await bootstrap();
-  if (!ok) {
-    // R2'ye ulaşılamadı: site kapanmasın, paketle gelen içerikle yayına devam
-    if (!content) content = seedContent();
-    if (!admin) admin = newAdmin();
-    console.error('  Site paketle gelen içerikle açıldı. R2 için 60 sn\'de bir tekrar denenecek.');
-    const timer = setInterval(async () => {
-      if (!r2Down) return clearInterval(timer);
-      if (await bootstrap()) clearInterval(timer);
-    }, 60000);
-    timer.unref && timer.unref();
-  }
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`\n  Mehmet Rahbay Mimarlık`);
-    console.log(`  Site          : http://localhost:${PORT}`);
-    console.log(`  Yönetim paneli: http://localhost:${PORT}/admin/`);
-    console.log(`  Depolama      : ${USE_R2 ? 'Cloudflare R2 (kalıcı)' : 'yerel klasör'}`);
-    console.log('');
-  });
-})();
+/* Önce paketle gelen içerikle anında hazır ol — böylece sunucu portu
+   milisaniyeler içinde açar ve Render "canlı" olarak işaretler.
+   Cloudflare'den gelen gerçek içerik hemen ardından arka planda yüklenir. */
+content = seedContent();
+admin = newAdmin();
+
+const ready = bootstrap().then((ok) => {
+  if (ok) return true;
+  console.error('  Site paketle gelen içerikle yayında. Depolama 60 sn\'de bir denenecek.');
+  const timer = setInterval(async () => {
+    if (!r2Down) return clearInterval(timer);
+    if (await bootstrap()) clearInterval(timer);
+  }, 60000);
+  if (timer.unref) timer.unref();
+  return false;
+});
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`\n  Mehmet Rahbay Mimarlık`);
+  console.log(`  Site          : http://localhost:${PORT}`);
+  console.log(`  Yönetim paneli: http://localhost:${PORT}/admin/`);
+  console.log(`  Depolama      : ${USE_R2 ? 'Cloudflare R2 (kalıcı)' : 'yerel klasör'}`);
+  console.log('');
+});
