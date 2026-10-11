@@ -330,7 +330,8 @@
   function renderProject(c) {
     const slug = decodeURIComponent(location.pathname.split('/').filter(Boolean).pop() || '');
     const list = c.projects || [];
-    const i = list.findIndex((p) => p.slug === slug);
+    let i = list.findIndex((p) => p.slug === slug);
+    if (i < 0) i = list.findIndex((p) => String(p.id) === slug);
     const p = list[i];
     if (!p) { location.replace('/'); return null; }
 
@@ -387,7 +388,8 @@
   function renderTraining(c) {
     const slug = decodeURIComponent(location.pathname.split('/').filter(Boolean).pop() || '');
     const list = c.trainings || [];
-    const i = list.findIndex((t) => t.slug === slug);
+    let i = list.findIndex((t) => t.slug === slug);
+    if (i < 0) i = list.findIndex((t) => String(t.id) === slug);
     const t = list[i];
     if (!t) { location.replace('/#egitimler'); return null; }
 

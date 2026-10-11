@@ -317,7 +317,7 @@ function renderProjects(){
       <button class="btn ghost sm" data-move="projects:${i}:-1">↑</button>
       <button class="btn ghost sm" data-move="projects:${i}:1">↓</button>
       <button class="btn danger sm" data-del="projects:${i}">Sil</button></div>
-      <div class="row c2">${text('projects.'+i+'.title','Proje adı')}${text('projects.'+i+'.slug','Adres eki (küçük harf, boşluksuz)')}</div>
+      <div class="row">${text('projects.'+i+'.title','Proje adı')}</div>
       <div class="row c3">${text('projects.'+i+'.category','Kategori')}${text('projects.'+i+'.year','Yıl')}${text('projects.'+i+'.location','Konum')}</div>
       <div class="row c3">${text('projects.'+i+'.area','Alan')}${text('projects.'+i+'.client','İşveren')}${text('projects.'+i+'.status','Durum')}</div>
       ${image('projects.'+i+'.cover','Kapak görseli')}
@@ -337,7 +337,7 @@ function renderTrainings(){
       <button class="btn ghost sm" data-move="trainings:${i}:-1">↑</button>
       <button class="btn ghost sm" data-move="trainings:${i}:1">↓</button>
       <button class="btn danger sm" data-del="trainings:${i}">Sil</button></div>
-      <div class="row c2">${text('trainings.'+i+'.title','Eğitim adı')}${text('trainings.'+i+'.slug','Adres eki (küçük harf, boşluksuz)')}</div>
+      <div class="row">${text('trainings.'+i+'.title','Eğitim adı')}</div>
       <div class="row c3">${text('trainings.'+i+'.level','Seviye')}${text('trainings.'+i+'.duration','Süre')}${text('trainings.'+i+'.format','Format')}</div>
       <div class="row c2">${text('trainings.'+i+'.seats','Kontenjan')}${text('trainings.'+i+'.price','Ücret')}</div>
       ${image('trainings.'+i+'.cover','Kapak görseli')}
@@ -458,11 +458,11 @@ document.addEventListener('click',async e=>{
     if(k.startsWith('faq:')){ const i=+k.split(':')[1]; const t=content.trainings[i];
       t.faq=t.faq||[]; t.faq.push({q:'Yeni soru',a:''}); setDirty(true); renderTrainings(); return; }
     if(k==='training') (content.trainings=content.trainings||[]).push({
-      id:'e'+Date.now(), slug:'yeni-egitim-'+((content.trainings||[]).length+1), title:'Yeni Eğitim',
+      id:'e'+Date.now(), slug:'', title:'Yeni Eğitim',
       level:'Başlangıç', duration:'4 hafta', format:'Online, canlı', price:'', seats:'',
       cover:(content.trainings&&content.trainings[0]&&content.trainings[0].cover)||'',
       images:[], summary:'', description:[], audience:[], requirements:[], curriculum:[], faq:[]});
-    if(k==='project') content.projects.push({id:'p'+Date.now(),slug:'yeni-proje-'+(content.projects.length+1),title:'Yeni Proje',
+    if(k==='project') content.projects.push({id:'p'+Date.now(),slug:'',title:'Yeni Proje',
       category:'Konut',year:new Date().getFullYear()+'',location:'',area:'',client:'',status:'Tasarım',
       cover:(content.projects[0]&&content.projects[0].cover)||'',images:[],summary:'',description:[],features:[]});
     setDirty(true); render(); return;

@@ -122,6 +122,36 @@ function normalizeUrls(node) {
   return node;
 }
 
+/* Adres eki (slug) panelde elle yazıldığı için iki kayıt aynı adresi
+   alabiliyordu; o durumda ikinci projeye tıklayınca birincisi açılıyordu.
+   Artık her kaydın adresi başlıktan türetilir ve mutlaka tekil olur. */
+const TR_MAP = { 'ç':'c','Ç':'c','ğ':'g','Ğ':'g','ı':'i','I':'i','İ':'i','ö':'o','Ö':'o','ş':'s','Ş':'s','ü':'u','Ü':'u' };
+function slugify(v) {
+  return String(v == null ? '' : v)
+    .replace(/[çÇğĞıIİöÖşŞüÜ]/g, (m) => TR_MAP[m] || m)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60);
+}
+function fixSlugs(data) {
+  const kinds = { projects: 'proje', trainings: 'egitim' };
+  for (const key of Object.keys(kinds)) {
+    const list = data && data[key];
+    if (!Array.isArray(list)) continue;
+    const used = new Set();
+    list.forEach((item, i) => {
+      if (!item || typeof item !== 'object') return;
+      const base = slugify(item.slug) || slugify(item.title) || `${kinds[key]}-${i + 1}`;
+      let s = base, n = 2;
+      while (used.has(s)) s = `${base}-${n++}`;
+      used.add(s);
+      item.slug = s;
+    });
+  }
+  return data;
+}
+
 function seedContent() {
   return JSON.parse(fs.readFileSync(path.join(SEED_DIR, 'content.json'), 'utf8'));
 }
@@ -137,7 +167,7 @@ function withDefaults(data) {
     const plain = (x) => x && typeof x === 'object' && !Array.isArray(x);
     if (plain(sv) && plain(dv)) out[k] = Object.assign({}, sv, dv);
   }
-  return out;
+  return fixSlugs(out);
 }
 
 async function loadContent() {
@@ -147,7 +177,7 @@ async function loadContent() {
     const seed = seedContent();
     await r2PutText('content.json', JSON.stringify(seed, null, 2));
     console.log('  R2: content.json ilk kez oluşturuldu');
-    return seed;
+    return fixSlugs(seed);
   }
   if (!fs.existsSync(CONTENT_FILE)) {
     const seed = path.join(SEED_DIR, 'content.json');
@@ -157,7 +187,7 @@ async function loadContent() {
 }
 
 async function saveContent(data) {
-  data = normalizeUrls(data);
+  data = fixSlugs(normalizeUrls(data));
   const text = JSON.stringify(data, null, 2);
   if (USE_R2) {
     const prev = await r2GetText('content.json');
