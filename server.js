@@ -450,6 +450,180 @@ app.delete('/api/media/:name', ensureReady, auth, async (req, res) => {
 if (path.resolve(UPLOAD_DIR) !== path.resolve(SEED_UPLOADS)) {
   app.use('/uploads', express.static(UPLOAD_DIR, { maxAge: '7d' }));
 }
+
+/* ------------------------------------------------------- arama motorları
+   Sayfalar tarayıcıda JavaScript ile dolduruluyor. Arama motorlarının ve
+   paylaşım önizlemelerinin doğru başlığı görmesi için başlık, açıklama,
+   canonical adres ve yapılandırılmış veri sunucuda HTML'e gömülür. */
+const PAGE_CACHE = {};
+function pageTemplate(name) {
+  if (!PAGE_CACHE[name])
+    PAGE_CACHE[name] = fs.readFileSync(path.join(__dirname, 'public', name), 'utf8');
+  return PAGE_CACHE[name];
+}
+function htmlEsc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function clip(s, n) {
+  s = String(s == null ? '' : s).replace(/\s+/g, ' ').trim();
+  return s.length > n ? s.slice(0, n - 1).trimEnd() + '…' : s;
+}
+function siteOrigin(req) {
+  const host = (req.get('x-forwarded-host') || req.get('host') || '').split(',')[0].trim();
+  const proto = (req.get('x-forwarded-proto') || req.protocol || 'https').split(',')[0].trim();
+  return `${proto}://${host}`;
+}
+function absUrl(req, u) {
+  if (!u) return '';
+  if (/^https?:\/\//i.test(u)) return u;
+  return siteOrigin(req) + (u.startsWith('/') ? u : '/' + u);
+}
+function renderPage(req, res, file, meta, jsonld) {
+  const origin = siteOrigin(req);
+  const canonical = origin + req.path;
+  const img = meta.image ? absUrl(req, meta.image) : '';
+  const head = [
+    `<title>${htmlEsc(meta.title)}</title>`,
+    `<meta name="description" content="${htmlEsc(meta.description)}">`,
+    `<link rel="canonical" href="${htmlEsc(canonical)}">`,
+    `<meta property="og:type" content="${htmlEsc(meta.type || 'website')}">`,
+    `<meta property="og:site_name" content="${htmlEsc(meta.siteName)}">`,
+    `<meta property="og:locale" content="tr_TR">`,
+    `<meta property="og:title" content="${htmlEsc(meta.title)}">`,
+    `<meta property="og:description" content="${htmlEsc(meta.description)}">`,
+    `<meta property="og:url" content="${htmlEsc(canonical)}">`,
+    img ? `<meta property="og:image" content="${htmlEsc(img)}">` : '',
+    `<meta name="twitter:card" content="${img ? 'summary_large_image' : 'summary'}">`,
+    `<meta name="twitter:title" content="${htmlEsc(meta.title)}">`,
+    `<meta name="twitter:description" content="${htmlEsc(meta.description)}">`,
+    img ? `<meta name="twitter:image" content="${htmlEsc(img)}">` : '',
+    jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld).replace(/</g, '\\u003c')}</script>` : ''
+  ].filter(Boolean).join('\n');
+
+  const html = pageTemplate(file)
+    .replace(/[ \t]*<title>[\s\S]*?<\/title>\r?\n?/i, '')
+    .replace(/[ \t]*<meta\s+name="description"[^>]*>\r?\n?/ig, '')
+    .replace(/[ \t]*<meta\s+property="og:[^"]*"[^>]*>\r?\n?/ig, '')
+    .replace('</head>', head + '\n</head>');
+
+  res.set('Cache-Control', 'public, max-age=0, must-revalidate');
+  res.type('html').send(html);
+}
+function siteMeta() {
+  const s = (content && content.site) || {};
+  return {
+    name: s.name || 'Mehmet Rahbay',
+    role: s.role || '',
+    description: s.description || ''
+  };
+}
+
+app.get('/', (req, res) => {
+  const s = siteMeta();
+  const hero = (content && content.hero) || {};
+  const title = s.role ? `${s.name} — ${s.role}` : s.name;
+  const desc = clip(hero.subtitle || hero.tagline || s.description, 300);
+  const origin = siteOrigin(req);
+  const socials = ((content && content.contact && content.contact.socials) || [])
+    .map((x) => x && x.url).filter((u) => /^https?:\/\//i.test(u || ''));
+  const jsonld = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebSite', '@id': origin + '/#website', url: origin + '/',
+        name: title, inLanguage: 'tr-TR'
+      },
+      {
+        '@type': 'ProfessionalService', '@id': origin + '/#org',
+        name: s.name, url: origin + '/',
+        description: clip(s.description, 500),
+        image: absUrl(req, hero.image || '/img/logo-tam-beyaz.png'),
+        logo: absUrl(req, '/img/logo-tam-beyaz.png'),
+        email: (content.contact && content.contact.email) || undefined,
+        telephone: (content.contact && content.contact.phone) || undefined,
+        address: (content.contact && content.contact.address)
+          ? { '@type': 'PostalAddress', streetAddress: content.contact.address } : undefined,
+        areaServed: 'Online',
+        sameAs: socials.length ? socials : undefined
+      }
+    ]
+  };
+  renderPage(req, res, 'index.html',
+    { title, description: desc, siteName: s.name, image: hero.image }, jsonld);
+});
+app.get('/index.html', (req, res) => res.redirect(301, '/'));
+
+app.get('/proje/:slug', (req, res) => {
+  const s = siteMeta();
+  const p = ((content && content.projects) || []).find((x) => x.slug === req.params.slug);
+  if (!p) return res.redirect(302, '/#projeler');
+  const bits = [p.category, p.year, p.location].filter(Boolean).join(' · ');
+  const desc = clip(p.summary || (p.description || [])[0] || bits || s.description, 300);
+  const jsonld = {
+    '@context': 'https://schema.org', '@type': 'CreativeWork',
+    name: p.title, headline: p.title, description: desc,
+    image: p.cover ? absUrl(req, p.cover) : undefined,
+    dateCreated: p.year || undefined,
+    locationCreated: p.location ? { '@type': 'Place', name: p.location } : undefined,
+    creator: { '@type': 'Organization', name: s.name, url: siteOrigin(req) + '/' }
+  };
+  renderPage(req, res, 'proje.html',
+    { title: `${p.title} — ${s.name}`, description: desc, siteName: s.name,
+      image: p.cover, type: 'article' }, jsonld);
+});
+
+app.get('/egitim/:slug', (req, res) => {
+  const s = siteMeta();
+  const t = ((content && content.trainings) || []).find((x) => x.slug === req.params.slug);
+  if (!t) return res.redirect(302, '/#egitimler');
+  const desc = clip(t.summary || (t.description || [])[0] || s.description, 300);
+  const jsonld = {
+    '@context': 'https://schema.org', '@type': 'Course',
+    name: t.title, description: desc,
+    image: t.cover ? absUrl(req, t.cover) : undefined,
+    inLanguage: 'tr-TR',
+    educationalLevel: t.level || undefined,
+    timeRequired: t.duration || undefined,
+    provider: { '@type': 'Organization', name: s.name, url: siteOrigin(req) + '/' },
+    hasCourseInstance: {
+      '@type': 'CourseInstance',
+      courseMode: 'online',
+      courseWorkload: t.duration || undefined
+    }
+  };
+  renderPage(req, res, 'egitim.html',
+    { title: `${t.title} — ${s.name}`, description: desc, siteName: s.name,
+      image: t.cover, type: 'article' }, jsonld);
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  const origin = siteOrigin(req);
+  const today = new Date().toISOString().slice(0, 10);
+  const urls = [{ loc: origin + '/', pri: '1.0', freq: 'weekly' }];
+  ((content && content.projects) || []).forEach((p) => {
+    if (p && p.slug) urls.push({ loc: `${origin}/proje/${encodeURIComponent(p.slug)}`, pri: '0.8', freq: 'monthly' });
+  });
+  ((content && content.trainings) || []).forEach((t) => {
+    if (t && t.slug) urls.push({ loc: `${origin}/egitim/${encodeURIComponent(t.slug)}`, pri: '0.8', freq: 'monthly' });
+  });
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n` +
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+    urls.map((u) =>
+      `  <url><loc>${htmlEsc(u.loc)}</loc><lastmod>${today}</lastmod>` +
+      `<changefreq>${u.freq}</changefreq><priority>${u.pri}</priority></url>`).join('\n') +
+    `\n</urlset>\n`;
+  res.set('Cache-Control', 'public, max-age=3600');
+  res.type('application/xml').send(xml);
+});
+
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain').send(
+    `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\n\n` +
+    `Sitemap: ${siteOrigin(req)}/sitemap.xml\n`);
+});
+
 app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] }));
 
 /* Pakette olmayan bir görsel istenirse Cloudflare R2'den okunup aktarılır.
@@ -471,12 +645,6 @@ app.get('/uploads/:name', async (req, res) => {
   }
 });
 
-app.get('/proje/:slug', (req, res) =>
-  res.sendFile(path.join(__dirname, 'public', 'proje.html'))
-);
-app.get('/egitim/:slug', (req, res) =>
-  res.sendFile(path.join(__dirname, 'public', 'egitim.html'))
-);
 app.get('/yonetim', (req, res) => res.redirect('/admin/'));
 app.use((req, res) => res.status(404).sendFile(path.join(__dirname, 'public', '404.html')));
 
