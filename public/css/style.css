@@ -144,7 +144,9 @@ ul { list-style: none; }
 }
 .nav a.nav-link:hover::after { transform: scaleX(1); transform-origin: left; }
 
-.btn-line, .btn-fill {
+/* a.* ile yazildi: ust menudeki `.nav a` kurali daha ozgul oldugu icin
+   butonun ic bosluğunu ve yazi boyutunu eziyordu. */
+a.btn-line, a.btn-fill, .btn-line, .btn-fill {
   --btn-h: 44px;
   height: var(--btn-h); padding: 0 22px; border-radius: 8px;
   font-size: 13.5px; font-weight: 600; letter-spacing: -0.005em; line-height: 1;
